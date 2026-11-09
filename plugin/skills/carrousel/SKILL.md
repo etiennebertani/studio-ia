@@ -86,10 +86,13 @@ Quand la personne demande d'en faire une règle, ou qu'une même préférence re
 
 Si `regles_versions` le demande, ne garde que la version validée dans `final/`. Liste ce qui va partir (`travail/final-vN/`, ancien `final-vN/`, `apercu-*/`, images et fichiers de travail qui ne servent plus à cette version) et attends son accord, puis mets ces éléments à la corbeille avec `mv` vers `~/.Trash/`. Ne touche jamais à `textes/`, ni aux fichiers qu'elle a déposés, ni à un autre carrousel.
 
+**Nomme les slides validées**, selon `${CLAUDE_PLUGIN_ROOT}/ressources/convention-nommage.md` : `python3 "$M/nommage.py" carrousel --dossier "<dossier du carrousel>/final" --client "<client>" --style <tweet, texte, texte-image, punchline ou infographie> --sujet "<sujet court>"`. `<client>` est la clé `client` de `marque.json` : si elle manque, demande son nom court et écris-la. Pour une déclinaison du même contenu, comme un 4b, ajoute `--numero 2`. Si une version antérieure de ce carrousel a déjà été envoyée sur Drive, dis-le : l'ancien fichier y reste, et il faudra le renommer avec son accord.
+
 Une fois le carrousel validé, ajoute-le à l'archive : `python3 "$M/archiver.py" --dossier <dossier du carrousel> --format carrousel --sujet "<titre>" --style "<style>" --structure "<structure>" --notion "<lien de la page>"`. Propose ensuite d'écrire sa légende avec le skill `studio:legende`. Quand le design et la légende sont validés, applique le skill `studio:drive`, section « Terminer un contenu validé ».
 
 ## Règles
 
+- **En cas de doute** sur un contenu, un fichier ou un statut, consulte Drive ou la banque Notion, et compare-les si besoin. La page Notion fait foi pour le statut, les fichiers sur Drive pour les finaux. Lecture seule, sauf accord.
 - Rien n'est publié par ce skill.
 - Aucune écriture dans Notion sans accord explicite, pour ce changement précis. Seule exception : quand la personne valide un contenu fini, le skill `studio:drive` applique sa section « Terminer un contenu validé ».
 - Ne modifie jamais les fichiers d'origine, ni le dossier du plugin. La personnalisation se fait uniquement dans `mon-espace`.

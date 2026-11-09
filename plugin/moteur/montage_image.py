@@ -11,6 +11,9 @@ pillow_heif.register_heif_opener()
 L, H = 1080, 1920
 X = 3
 BAS_UTILE = 1484
+DROITE_UTILE = 1018
+GAUCHE_UTILE = 58
+HAUT_ENGAGEMENT = 907
 
 
 def position_tete(rushes, instants):
@@ -83,16 +86,20 @@ def dessiner_titre(texte, r, police, place, sortie):
     """Dessine le titre, réduit par paliers jusqu'à tenir dans la place disponible."""
     blanc, noir = separer_titre(texte)
     blanc = re.sub(r" ([?!:;»])", "\u00a0\\1", blanc).replace("« ", "«\u00a0")
-    echelle = 1.0
+    fixe = r.get("echelle_fixe")
+    echelle = fixe or 1.0
     while True:
         e = echelle * X
         fonte = ImageFont.truetype(str(police), round(r["taille"] * e))
         pad_x, pad_y, pas = r["pad_x"] * e, r["pad_y"] * e, r["interligne"] * e
-        lignes = _lignes(blanc, fonte, r["largeur_max"] * X - 2 * pad_x)
-        h_blanc = len(lignes) * pas + 2 * pad_y
-        h_noir = (r["noir_interligne"] + 2 * r["noir_pad_y"]) * e if noir else 0
-        total = h_blanc + (h_noir - r["noir_chevauchement"] * e if noir else 0)
-        if total / X <= place or echelle <= r["echelle_min"]:
+        for largeur_cadre in (r["largeur_max"], r["largeur_etendue"]):
+            lignes = _lignes(blanc, fonte, largeur_cadre * X - 2 * pad_x)
+            h_blanc = len(lignes) * pas + 2 * pad_y
+            h_noir = (r["noir_interligne"] + 2 * r["noir_pad_y"]) * e if noir else 0
+            total = h_blanc + (h_noir - r["noir_chevauchement"] * e if noir else 0)
+            if total / X <= place:
+                break
+        if total / X <= place or fixe or echelle <= r["echelle_min"]:
             break
         echelle = round(echelle - 0.02, 2)
     image = Image.new("RGBA", (L * X, int(total)), (0, 0, 0, 0))
@@ -132,12 +139,23 @@ def dessiner_image(source, r, sortie, hauteur_max=None):
     return w, h
 
 
-def place_image(hauteur, tete, y_sous_titres, y_titre, pendant_titre, r):
-    """Au-dessus de la tête s'il y a la place, sinon en bas. Renvoie (y, hauteur maximale)."""
-    if tete["haut"] is not None and not pendant_titre and tete["haut"] - y_titre >= hauteur + 2 * r["marge"]:
-        return tete["haut"] - r["marge"] - hauteur, hauteur
-    y = y_sous_titres + r["ecart_sous_titres"]
-    return y, min(hauteur, BAS_UTILE - y)
+def place_image(hauteur, tete, y_sous_titres, y_haut, r):
+    """Choisit où poser l'image : au-dessus de la tête, sinon en bas, sinon à côté de la tête.
+
+    Renvoie (endroit, hauteur maximale), ou None si aucune place n'est assez grande pour qu'on voie l'image.
+    """
+    dessus = tete["haut"] - y_haut - 2 * r["marge"] if tete["haut"] is not None else 0
+    bas = BAS_UTILE - (y_sous_titres + r["ecart_sous_titres"])
+    if dessus >= hauteur:
+        return "dessus", hauteur
+    if bas >= hauteur:
+        return "bas", hauteur
+    endroit, place = ("dessus", dessus) if dessus >= bas else ("bas", bas)
+    if place >= r["hauteur_min"]:
+        return endroit, place
+    if tete["haut"] is not None:
+        return "cote", min(hauteur, r["hauteur_cote"], HAUT_ENGAGEMENT - tete["haut"])
+    return None
 
 
 def _temps_ass(t):

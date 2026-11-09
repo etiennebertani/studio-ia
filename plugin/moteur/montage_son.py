@@ -1,4 +1,5 @@
 """Le son d'un rush : transcription au mot, vraie place de la voix, propositions de coupe."""
+import difflib
 import json
 import re
 import subprocess
@@ -15,6 +16,13 @@ PAS = 0.02
 FPS = 30
 MARGE_ECOUTE = 0.15
 ECART_PRISES = 0.35
+DUREE_MORCEAU_MIN = 0.3
+MOTS_COLLES = 0.15
+FANTOME = ["soustitrage", "société", "radiocanada"]
+REPRISE_ECART = 60
+DOUBLON_SEUIL = 0.7
+AFFINER_RAYON = 0.7
+AFFINER_ESSAIS = 16
 
 
 def lancer(commande, cwd=None):
@@ -85,7 +93,20 @@ def transcrire(source, invite, langue="fr", zones=None):
         mots = []
         for chemin, decalage in morceaux:
             mots += _lire_mots(str(chemin) + ".json", decalage)
-    return mots
+    return enlever_fantomes(mots)
+
+
+def enlever_fantomes(mots):
+    """Retire les génériques que la transcription invente sur les silences."""
+    gardes = []
+    i = 0
+    while i < len(mots):
+        if [normaliser(m["w"]) for m in mots[i:i + 3]] == FANTOME:
+            i += 3
+            continue
+        gardes.append(mots[i])
+        i += 1
+    return gardes
 
 
 class Voix:
@@ -104,9 +125,20 @@ class Voix:
         niveau = 20 * np.log10(np.sqrt((cadres ** 2).mean(axis=1)) + 1e-6)
         niveau = np.convolve(niveau, np.ones(3) / 3, "same")
         bas, haut = np.percentile(niveau, 10), np.percentile(niveau, 95)
+        self.niveau = niveau
         self.seuil = float(bas + 0.4 * (haut - bas))
         self.parle = self._nettoyer(niveau > self.seuil)
         self.duree = n * PAS
+
+    def recaler(self, morceaux):
+        """Remesure le silence sur les seuls passages gardés : les longues pauses d'un rush faussent le niveau."""
+        cadres = [self.niveau[self._indice(a):self._indice(b) + 1] for a, b in morceaux if b > a]
+        if not cadres:
+            return
+        niveau = np.concatenate(cadres)
+        bas, haut = np.percentile(niveau, 10), np.percentile(niveau, 95)
+        self.seuil = float(bas + 0.4 * (haut - bas))
+        self.parle = self._nettoyer(self.niveau > self.seuil)
 
     @staticmethod
     def _nettoyer(parle):
@@ -138,6 +170,11 @@ class Voix:
         if debut is not None:
             sortie.append((max(debut * PAS, a), b))
         return [(x, y) for x, y in sortie if y > x]
+
+    def creux(self, t, rayon=0.06):
+        """Le moment le plus calme autour de t : là où une coupe ne mord sur aucun mot."""
+        a, b = self._indice(t - rayon), self._indice(t + rayon) + 1
+        return round((a + int(np.argmin(self.niveau[a:b]))) * PAS, 3)
 
     def prises(self):
         """Les prises de parole : les zones de voix, réunies quand le blanc entre elles est court."""
@@ -242,6 +279,136 @@ def proposer_retraits(mots, regles):
     return retraits
 
 
+def proposer_reprises(mots, voix, regles):
+    """Les passages dits plusieurs fois, même avec des mots un peu différents : [{"prise", "reprise", "ressemblance"}]."""
+    ignores = set(regles["mots_parasites"]) | {"donc", "bon", "alors", "voila", "enfin", "hein"}
+    groupes = []
+    for rang, v in enumerate(voix):
+        for debut, fin in v.prises():
+            indices = [i for i, m in enumerate(mots) if m["r"] == rang and debut <= (m["s"] + m["e"]) / 2 <= fin]
+            if indices:
+                formes = [normaliser(mots[i]["w"]) for i in indices]
+                groupes.append({"r": rang, "premier": indices[0], "dernier": indices[-1], "debut": debut, "fin": fin,
+                                "formes": [f for f in formes if f and f not in ignores]})
+    reprises = []
+    for k, groupe in enumerate(groupes):
+        if len(groupe["formes"]) < 3:
+            continue
+        for suivant in groupes[k + 1:k + 5]:
+            if suivant["r"] != groupe["r"] or suivant["debut"] - groupe["fin"] > REPRISE_ECART or not suivant["formes"]:
+                continue
+            ressemblance = difflib.SequenceMatcher(None, groupe["formes"], suivant["formes"]).ratio()
+            faux_depart = len(groupe["formes"]) < len(suivant["formes"]) and suivant["formes"][:len(groupe["formes"])] == groupe["formes"]
+            if faux_depart or (ressemblance >= 0.6 and len(suivant["formes"]) >= 0.6 * len(groupe["formes"])):
+                reprises.append({"prise": [groupe["premier"], groupe["dernier"]], "reprise": [suivant["premier"], suivant["dernier"]],
+                                 "ressemblance": round(ressemblance, 2)})
+                break
+    return reprises
+
+
+def doublons_son(source, seuil=DOUBLON_SEUIL):
+    """Compare le son à lui-même : deux passages presque identiques qui se suivent trahissent un bafouillage."""
+    with tempfile.TemporaryDirectory() as dossier:
+        chemin = Path(dossier) / "son.wav"
+        vers_wav(source, chemin)
+        with wave.open(str(chemin), "rb") as fichier:
+            echantillons = np.frombuffer(fichier.readframes(fichier.getnframes()), dtype=np.int16).astype(float) / 32768
+    fenetre, saut = 400, 320
+    n = (len(echantillons) - fenetre) // saut
+    if n <= 0:
+        return []
+    forme = np.hanning(fenetre)
+    spectre = np.array([np.abs(np.fft.rfft(echantillons[i * saut:i * saut + fenetre] * forme)) for i in range(n)])
+    frequences = np.fft.rfftfreq(fenetre, 1 / TAUX)
+    bandes = np.geomspace(100, 6000, 41)
+    filtre = np.array([spectre[:, (frequences >= bandes[b]) & (frequences < bandes[b + 1])].sum(axis=1) for b in range(40)]).T
+    empreinte = np.log(filtre + 1e-6)
+    empreinte -= empreinte.mean(axis=0)
+    energie = 20 * np.log10(np.sqrt((spectre ** 2).mean(axis=1)) + 1e-9)
+    parle = energie > np.percentile(energie, 35)
+    pas = saut / TAUX
+
+    def centrer(bloc):
+        bloc = bloc - bloc.mean(axis=0)
+        return bloc / (np.linalg.norm(bloc) + 1e-9)
+
+    trouves = []
+    for longueur in (12, 16, 20, 25, 30, 38, 48, 60):
+        for i in range(0, n - 2 * longueur - 30, 2):
+            if parle[i:i + longueur].mean() < 0.8:
+                continue
+            bloc = centrer(empreinte[i:i + longueur])
+            meilleur = (0.0, None)
+            for ecart in range(0, 31):
+                j = i + longueur + ecart
+                if j + longueur <= n and parle[j:j + longueur].mean() >= 0.8:
+                    score = float((bloc * centrer(empreinte[j:j + longueur])).sum())
+                    if score > meilleur[0]:
+                        meilleur = (score, j)
+            if meilleur[0] > seuil:
+                trouves.append((round(meilleur[0], 2), round(i * pas, 2), round(meilleur[1] * pas, 2)))
+    gardes = []
+    for score, a, b in sorted(trouves, reverse=True):
+        if not any(abs(a - g["debut"]) < 0.4 for g in gardes):
+            gardes.append({"score": score, "debut": a, "reprise": b})
+    return sorted(gardes, key=lambda g: g["debut"])
+
+
+def affiner_coupes(rush, voix, mots, demandes, langue="fr"):
+    """Essaie plusieurs creux du son autour d'une coupe et garde celui où l'on entend exactement les mots attendus."""
+    exe, modele = commun.outil("whisper-cli"), commun.modele_whisper()
+    resultats, essais = [], []
+
+    def formes(texte):
+        return [f for f in (normaliser(x) for x in re.split(r"[\s'’-]+", texte)) if f]
+
+    with tempfile.TemporaryDirectory() as dossier:
+        dossier = Path(dossier)
+        son = dossier / "son.wav"
+        vers_wav(rush, son)
+        with wave.open(str(son), "rb") as fichier:
+            brut = fichier.readframes(fichier.getnframes())
+        for rang, (sens, mot, attendu) in enumerate(demandes):
+            nominal = mots[mot]["s"] if sens == "debut" else mots[mot]["e"]
+            a, b = int((nominal - AFFINER_RAYON) / PAS), int((nominal + AFFINER_RAYON) / PAS)
+            creux = [k * PAS for k in range(max(a, 1), min(b, len(voix.niveau) - 1))
+                     if voix.niveau[k] <= voix.niveau[k - 1] and voix.niveau[k] <= voix.niveau[k + 1]]
+            for numero, point in enumerate(sorted(creux, key=lambda c: abs(c - nominal))[:AFFINER_ESSAIS]):
+                x, y = (point, point + 1.6) if sens == "debut" else (max(point - 1.6, 0.0), point)
+                chemin = dossier / f"essai{rang:03d}{numero:03d}.wav"
+                with wave.open(str(chemin), "wb") as sortie:
+                    sortie.setnchannels(1)
+                    sortie.setsampwidth(2)
+                    sortie.setframerate(TAUX)
+                    sortie.writeframes(brut[int(x * TAUX) * 2:int(y * TAUX) * 2])
+                essais.append((rang, point, chemin))
+        commande = [exe, "-m", modele, "-l", langue, "-oj", "-np"]
+        for _, _, chemin in essais:
+            commande += ["-f", chemin]
+        lancer(commande)
+        for rang, (sens, mot, attendu) in enumerate(demandes):
+            cible = formes(attendu)
+            trouve = None
+            for _, point, chemin in (e for e in essais if e[0] == rang):
+                donnees = json.loads(Path(str(chemin) + ".json").read_text(encoding="utf-8", errors="replace"))
+                entendu = formes(" ".join(s["text"] for s in donnees.get("transcription", [])))
+                extrait = entendu[:len(cible)] if sens == "debut" else entendu[-len(cible):]
+                if extrait == cible:
+                    trouve = round(point, 3)
+                    break
+            if trouve is not None:
+                if sens == "debut":
+                    mots[mot]["s"] = trouve
+                    if mot:
+                        mots[mot - 1]["e"] = trouve
+                else:
+                    mots[mot]["e"] = trouve
+                    if mot + 1 < len(mots):
+                        mots[mot + 1]["s"] = trouve
+            resultats.append({"mot": mot, "sens": sens, "attendu": attendu, "coupe": trouve})
+    return resultats
+
+
 def passages_depuis(mots, retraits):
     passages, debut = [], None
     for i, mot in enumerate(mots):
@@ -267,20 +434,30 @@ def couper(mots, voix, passages, regles, blanc_max):
         debut_voix = v.debut(mots[i]["s"], mots[i]["e"], lim_avant)
         fin_voix = v.fin(mots[j]["s"], mots[j]["e"], lim_apres)
         avant = regles["attaque"] if rang == 0 else regles["marge"]
-        apres = regles["fin"] if rang == len(passages) - 1 else regles["marge"]
+        marge_apres = regles.get("marge_apres", regles["marge"])
+        apres = regles["fin"] if rang == len(passages) - 1 else marge_apres
         courant = max(debut_voix - avant, lim_avant, 0.0)
         limite_fin = min(fin_voix + apres, lim_apres, v.duree)
+        if i and mots[i - 1]["r"] == rush and mots[i]["s"] - mots[i - 1]["e"] < MOTS_COLLES:
+            courant = debut_voix = v.creux(mots[i]["s"])
+        if j + 1 < len(mots) and mots[j + 1]["r"] == rush and mots[j + 1]["s"] - mots[j]["e"] < MOTS_COLLES:
+            limite_fin = fin_voix = v.creux(mots[j]["e"])
         for x, y in v.zones(debut_voix, fin_voix, valeur=False):
             if y - x <= blanc_max:
                 continue
-            coupe_a, coupe_b = x + regles["marge"], y - regles["marge"]
+            coupe_a, coupe_b = x + marge_apres, y - regles["marge"]
             if coupe_b - coupe_a > 0.05:
                 if coupe_a - courant > 0.05:
                     plans.append({"r": rush, "debut": round(courant, 3), "fin": round(coupe_a, 3)})
                 courant = coupe_b
         if limite_fin - courant > 0.05:
             plans.append({"r": rush, "debut": round(courant, 3), "fin": round(limite_fin, 3)})
-    return plans
+    gardes = [mots[k] for i, j in passages for k in range(i, j + 1)]
+
+    def contient_un_mot(plan):
+        return any(m["r"] == plan["r"] and plan["debut"] <= (m["s"] + m["e"]) / 2 <= plan["fin"] for m in gardes)
+
+    return [p for p in plans if p["fin"] - p["debut"] >= DUREE_MORCEAU_MIN or contient_un_mot(p)]
 
 
 def duree_plan(plan):
@@ -297,6 +474,8 @@ def mots_finaux(mots, passages, plans, corrections):
     for i, j in passages:
         for k in range(i, j + 1):
             mot = mots[k]
+            if corrections.get(str(k)) == "":
+                continue
             milieu = (mot["s"] + mot["e"]) / 2
             candidats = [t for t in table if t[0]["r"] == mot["r"]]
 
