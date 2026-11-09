@@ -1,0 +1,7 @@
+mon-espace/
+AVANCEMENT.md
+.DS_Store
+__pycache__/
+*.pyc
+ROADMAP.md
+AVANT-GITHUB.md

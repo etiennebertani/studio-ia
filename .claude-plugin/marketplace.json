@@ -1,0 +1,14 @@
+{
+  "name": "studio-ia",
+  "description": "Studio IA par Etienne Bertani.",
+  "owner": {
+    "name": "Etienne Bertani"
+  },
+  "plugins": [
+    {
+      "name": "studio",
+      "source": "./plugin",
+      "description": "Carrousels, reels, stories et posts, dans ton style, depuis un simple chat."
+    }
+  ]
+}
