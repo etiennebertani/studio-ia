@@ -11,7 +11,7 @@ import commun
 
 CONTROLE_MOTEUR = """
 from pathlib import Path
-import PIL, pillow_heif
+import PIL, pillow_heif, cv2, numpy
 from playwright.sync_api import sync_playwright
 with sync_playwright() as p:
     assert Path(p.chromium.executable_path).exists()
@@ -45,6 +45,7 @@ def main():
     print(json.dumps({
         "manque_systeme": manque,
         "moteur_pret": moteur_pret(args.data),
+        "montage_pret": bool(commun.outil("whisper-cli") and commun.modele_whisper()),
         "espace": str(commun.ESPACE),
         "espace_existe": all((commun.ESPACE / d).is_dir() for d in commun.DOSSIERS),
         "configure": bool(commun.lire_config().get("accueil_termine")),

@@ -1,4 +1,4 @@
-"""Crée ou retire les commandes courtes (/start, /reel...) dans ~/.claude/skills.
+"""Crée ou retire les commandes courtes (/start, /montage...) dans ~/.claude/skills.
 
     python3 raccourcis.py --creer
     python3 raccourcis.py --retirer

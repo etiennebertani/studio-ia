@@ -1,0 +1,128 @@
+{
+  "_note": "Règles de base du montage, communes à tous et mises à jour avec le Studio. Ne rien personnaliser ici : la personnalisation va dans 00. Branding/<marque>/montage.json, avec les mêmes noms.",
+  "regles": {
+    "marge": 0.12,
+    "attaque": 0.08,
+    "fin": 0.4,
+    "repetition_max": 0.6,
+    "reprise_max": 1.5,
+    "mots_parasites": ["euh", "euhh", "euhm", "heu", "hum", "hmm", "mmh", "bah", "uh", "um", "erm"],
+    "repetitions_permises": ["nous", "vous", "très", "non", "oui"],
+    "invite_transcription": "Euh, je, je, enfin, euh, on se, on se met, voilà, du coup."
+  },
+  "titre": {
+    "police": "Poppins-Bold.ttf",
+    "taille": 88,
+    "interligne": 98,
+    "largeur_max": 806,
+    "pad_x": 33,
+    "pad_y": 45,
+    "rayon": 24,
+    "y": 250,
+    "marge_tete": 16,
+    "duree": 3.2,
+    "echelle_min": 0.5,
+    "noir_taille": 69,
+    "noir_interligne": 77,
+    "noir_pad_x": 26,
+    "noir_pad_y": 32,
+    "noir_chevauchement": 25
+  },
+  "sous_titres": {
+    "police": "Poppins-Bold.ttf",
+    "taille": 76,
+    "couleur": "#FFFFFF",
+    "ombre": 3,
+    "mots_par_bloc": 3,
+    "ecart_menton": 70,
+    "y_defaut": 1126,
+    "y_max": 1380
+  },
+  "images": {
+    "largeur_max": 250,
+    "hauteur_max": 300,
+    "pad": 16,
+    "rayon": 24,
+    "marge": 16,
+    "ecart_sous_titres": 59,
+    "duree": 1.5
+  },
+  "plans_de_coupe": {
+    "debut_min": 3.0,
+    "duree": 1.5
+  },
+  "styles": [
+    {
+      "id": "yap",
+      "nom": "Yap",
+      "pour": "Tu parles face caméra, téléphone à la main, dans un vrai lieu : assis, en marchant, en voiture.",
+      "disponible": true,
+      "blanc_max": 0.25,
+      "prerequis": [
+        { "id": "rush", "quoi": "Ta vidéo brute", "besoin": "obligatoire", "qui": "toi" },
+        { "id": "titre", "quoi": "Le titre du début, écrit ici ou dans ta banque Notion", "besoin": "conseille", "qui": "toi" },
+        { "id": "images", "quoi": "Des petites images à l'écran", "besoin": "a_la_demande", "qui": "studio_ou_toi", "note": "Le Studio peut les chercher, seulement si tu le demandes." },
+        { "id": "b_roll", "quoi": "Des plans de coupe précis", "besoin": "a_la_demande", "qui": "toi", "note": "Dépose-les dans ton dossier B-roll." }
+      ]
+    },
+    {
+      "id": "face-camera",
+      "nom": "Face caméra",
+      "pour": "Un conseil éducatif, avec un texte préparé.",
+      "disponible": false,
+      "blanc_max": 0.35,
+      "prerequis": [
+        { "id": "rush", "quoi": "Ta vidéo brute", "besoin": "obligatoire", "qui": "toi" },
+        { "id": "script", "quoi": "Ton texte, de 130 à 150 mots", "besoin": "conseille", "qui": "toi" },
+        { "id": "b_roll", "quoi": "Tes plans de coupe", "besoin": "obligatoire", "qui": "toi", "note": "Dépose-les dans ton dossier B-roll." },
+        { "id": "images", "quoi": "Tes images à l'écran", "besoin": "obligatoire", "qui": "studio_ou_toi", "note": "Le Studio peut lister celles qu'il faudrait et t'aider à les chercher." }
+      ]
+    },
+    {
+      "id": "coupe-propre",
+      "nom": "Coupe propre",
+      "pour": "Nettoyer une vidéo sans choisir de format.",
+      "disponible": false,
+      "blanc_max": 0.35,
+      "prerequis": [
+        { "id": "rush", "quoi": "Ta vidéo brute", "besoin": "obligatoire", "qui": "toi" },
+        { "id": "b_roll", "quoi": "Des plans de coupe", "besoin": "a_la_demande", "qui": "toi", "note": "Dépose-les dans ton dossier B-roll." }
+      ]
+    },
+    {
+      "id": "vlog",
+      "nom": "Vlog",
+      "pour": "Une histoire racontée sur des images de ta vie, de 60 à 90 secondes.",
+      "disponible": false,
+      "blanc_max": 0.35,
+      "prerequis": [
+        { "id": "voix", "quoi": "Ta voix qui raconte", "besoin": "obligatoire", "qui": "toi" },
+        { "id": "clips", "quoi": "Tes clips de vie", "besoin": "obligatoire", "qui": "toi" },
+        { "id": "musique", "quoi": "Ta musique", "besoin": "obligatoire", "qui": "toi" }
+      ]
+    },
+    {
+      "id": "one-shot",
+      "nom": "One shot (nom à choisir)",
+      "pour": "Un seul plan, un texte, sans parole.",
+      "disponible": false,
+      "blanc_max": 0.35,
+      "prerequis": [
+        { "id": "clip", "quoi": "Ton plan", "besoin": "obligatoire", "qui": "toi" },
+        { "id": "texte", "quoi": "Ton texte", "besoin": "obligatoire", "qui": "toi" },
+        { "id": "musique", "quoi": "Ta musique", "besoin": "obligatoire", "qui": "toi" }
+      ]
+    },
+    {
+      "id": "dix-shots",
+      "nom": "10 shots",
+      "pour": "Plein de plans courts, avec ta voix ou sur une musique.",
+      "disponible": false,
+      "blanc_max": 0.35,
+      "prerequis": [
+        { "id": "clips", "quoi": "Tes plans", "besoin": "obligatoire", "qui": "toi" },
+        { "id": "voix_ou_musique", "quoi": "Ta voix ou ta musique", "besoin": "obligatoire", "qui": "toi" }
+      ]
+    }
+  ]
+}

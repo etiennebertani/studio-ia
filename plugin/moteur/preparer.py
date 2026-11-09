@@ -2,12 +2,14 @@
 
     python3 preparer.py --data <dossier de données du plugin>
     python3 preparer.py --data <dossier> --terminer-accueil
+    python3 preparer.py --data <dossier> --modele-transcription
 
 Peut être relancé sans risque : il ne supprime ni ne remplace aucun fichier personnel.
 """
 import argparse
 import subprocess
 import sys
+import urllib.request
 from pathlib import Path
 
 import commun
@@ -37,13 +39,29 @@ def installer_moteur(data):
     lancer([str(python), "-m", "playwright", "install", "chromium"])
 
 
+def installer_modele():
+    """Télécharge le modèle de transcription (environ 550 Mo), s'il manque."""
+    if commun.modele_whisper():
+        return
+    commun.DOSSIER_MODELES.mkdir(parents=True, exist_ok=True)
+    cible = commun.MODELES_WHISPER[0]
+    temporaire = cible.with_suffix(".tmp")
+    urllib.request.urlretrieve(commun.URL_MODELE, temporaire)
+    temporaire.replace(cible)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", required=True)
     parser.add_argument("--terminer-accueil", action="store_true")
+    parser.add_argument("--modele-transcription", action="store_true")
     args = parser.parse_args()
 
     creer_espace()
+    if args.modele_transcription:
+        installer_modele()
+        print("Modèle prêt.")
+        return
     if args.terminer_accueil:
         commun.ecrire_config({"accueil_termine": True, "version_config": 1})
         print("Accueil terminé.")

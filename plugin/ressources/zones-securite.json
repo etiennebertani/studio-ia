@@ -1,0 +1,14 @@
+{
+  "_note": "Zones à éviter, en pixels, sur une image de 1080 x 1920. x vers la droite, y vers le bas.",
+  "reel": {
+    "largeur": 1080,
+    "hauteur": 1920,
+    "zone_utile": { "x_min": 58, "x_max": 1018, "y_min": 129, "y_max": 1484 },
+    "zones_interdites": [
+      { "nom": "interface du haut", "x": 249, "y": 153, "largeur": 583, "hauteur": 95 },
+      { "nom": "icônes d'engagement", "x": 859, "y": 907, "largeur": 221, "hauteur": 577 },
+      { "nom": "légende", "x": 0, "y": 1484, "largeur": 1080, "hauteur": 436 }
+    ]
+  },
+  "story": null
+}

@@ -18,6 +18,9 @@ ARCHIVE = ESPACE / NOMS["branding"] / "archive-contenus.jsonl"
 DOSSIERS = list(NOMS.values()) + [NOMS["branding"] + "/musiques", NOMS["branding"] + "/structures"]
 SKILLS_PERSO = Path.home() / ".claude" / "skills"
 MARQUE_RACCOURCI = ".studio-raccourci"
+DOSSIER_MODELES = Path.home() / "Library/Application Support/whisper.cpp/models"
+MODELES_WHISPER = [DOSSIER_MODELES / nom for nom in ("ggml-large-v3-turbo-q5_0.bin", "ggml-large-v3-turbo.bin")]
+URL_MODELE = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo-q5_0.bin"
 VERSION_PYTHON_MIN = (3, 10)
 OUTILS_SYSTEME = ["ffmpeg", "ffprobe", "git"]
 NOMS_PYTHON = ["python3.13", "python3.12", "python3.11", "python3.10", "python3"]
@@ -57,6 +60,10 @@ def outil(nom):
     return shutil.which(nom, path=chemin_recherche)
 
 
+def modele_whisper():
+    return next((m for m in MODELES_WHISPER if m.is_file()), None)
+
+
 def lire_config():
     try:
         return json.loads(CONFIG.read_text(encoding="utf-8"))
@@ -76,7 +83,7 @@ def ecrire_config(valeurs):
 def modules_disponibles():
     """Les modules de création réellement présents dans le plugin."""
     dossier = RACINE_PLUGIN / "skills"
-    return [nom for nom in ("style", "carrousel", "legende", "drive", "reel", "story", "post")
+    return [nom for nom in ("style", "carrousel", "legende", "drive", "montage", "story", "post")
             if (dossier / nom / "SKILL.md").is_file()]
 
 
