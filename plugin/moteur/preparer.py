@@ -37,6 +37,9 @@ def installer_moteur(data):
     requirements = commun.RACINE_PLUGIN / "moteur" / "requirements.txt"
     lancer([str(python), "-m", "pip", "install", "--quiet", "-r", str(requirements)])
     lancer([str(python), "-m", "playwright", "install", "chromium"])
+    # Voix : DeepFilterNet, figé et vérifié. Un échec ne bloque pas l'installation (repli sur ffmpeg).
+    r = subprocess.run([str(python), str(Path(__file__).parent / "voix.py"), "installer"], capture_output=True, text=True)
+    print("Voix : " + (r.stdout.strip() or r.stderr.strip()[-300:]))
 
 
 def installer_modele():

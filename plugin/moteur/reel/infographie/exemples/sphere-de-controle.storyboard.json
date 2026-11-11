@@ -1,0 +1,212 @@
+{
+ "titre": "Sphère de contrôle",
+ "signature": "@etienne.bertani",
+ "scenes": [
+  {
+   "geste": "ouverture",
+   "phrases": [
+    "Il y a des choses que nous contrôlons",
+    "et d'autres que nous ne contrôlons pas."
+   ],
+   "mots": {
+    "ferme": "contrôlons",
+    "trait": "d'autres",
+    "pointille": "ne"
+   }
+  },
+  {
+   "geste": "liste",
+   "phrases": [
+    "Celles que nous contrôlons sont",
+    "nos jugements, nos opinions,",
+    "nos objectifs, nos désirs, nos peurs.",
+    "En bref, nos pensées et nos actions."
+   ],
+   "mots": {
+    "items": [
+     "jugements",
+     "opinions",
+     "objectifs",
+     "désirs",
+     "peurs",
+     "bref"
+    ]
+   },
+   "textes": [
+    "nos jugements,",
+    "nos opinions,",
+    "nos objectifs,",
+    "nos désirs,",
+    "nos peurs."
+   ],
+   "sous_titres_caches": [
+    1,
+    2
+   ]
+  },
+  {
+   "geste": "envol",
+   "phrases": [
+    "Ce que nous ne contrôlons pas, c'est",
+    "notre apparence physique,",
+    "la classe sociale dans laquelle nous sommes nés,",
+    "notre réputation aux yeux des autres,",
+    "la richesse, la célébrité,",
+    "le pouvoir ou les honneurs",
+    "qui pourraient nous être accordés."
+   ],
+   "mots": {
+    "points": [
+     "apparence",
+     "classe",
+     "réputation",
+     "richesse",
+     "célébrité",
+     "pouvoir",
+     "honneurs"
+    ]
+   }
+  },
+  {
+   "geste": "personne",
+   "phrases": [
+    "Tant que nous restons dans notre sphère de contrôle,",
+    "nous sommes naturellement libres, indépendants et forts."
+   ],
+   "mots": {
+    "pulsations": [
+     "libres",
+     "indépendants",
+     "forts"
+    ]
+   }
+  },
+  {
+   "geste": "sortie",
+   "phrases": [
+    "En dehors de cette sphère de contrôle,",
+    "nous sommes faibles, limités et dépendants."
+   ],
+   "mots": {
+    "depart": "dehors",
+    "arrivee": "sphère",
+    "retrecit": [
+     "faibles",
+     "limités",
+     "dépendants"
+    ]
+   }
+  },
+  {
+   "geste": "escalier",
+   "phrases": [
+    "Souviens-toi donc que si tu fondes des espoirs",
+    "sur des choses que tu ne contrôles pas",
+    "ou si tu considères comme t'appartenant",
+    "des choses qui appartiennent aux autres,",
+    "tu seras susceptible de trébucher, de tomber,",
+    "de souffrir et de blâmer les dieux et les hommes."
+   ],
+   "mots": {
+    "marches": [
+     "trébucher",
+     "tomber",
+     "souffrir",
+     "blâmer"
+    ]
+   },
+   "textes": [
+    "trébucher",
+    "tomber",
+    "souffrir",
+    "blâmer"
+   ],
+   "sous_titres_caches": [
+    4,
+    5
+   ]
+  },
+  {
+   "geste": "anneaux",
+   "phrases": [
+    "Mais si tu concentres ton attention",
+    "seulement sur ce qui te concerne",
+    "et laisse aux autres ce qui les concerne,",
+    "alors tu seras maître de ton esprit."
+   ],
+   "mots": {
+    "anneaux": [
+     "concentres",
+     "maître"
+    ]
+   }
+  },
+  {
+   "geste": "colonne",
+   "phrases": [
+    "Personne ne pourra te blesser ou te nuire.",
+    "Tu ne t'en prendras à personne.",
+    "Tu n'accuseras personne.",
+    "Tu ne feras rien malgré toi.",
+    "Personne ne te nuira",
+    "et tu n'auras pas d'ennemis."
+   ],
+   "mot_fort": "personne",
+   "sous_titres_caches": "toutes"
+  },
+  {
+   "geste": "autres",
+   "phrases": [
+    "Si tu souhaites la sagesse et la tranquillité,",
+    "libère ton attachement",
+    "de tout ce qui est hors de ton contrôle."
+   ],
+   "mots": {
+    "coupe": [
+     "libère",
+     "hors"
+    ]
+   }
+  },
+  {
+   "geste": "mots_autour",
+   "phrases": [
+    "Les abonnés, les likes,",
+    "le jugement des autres ou leur jalousie",
+    "sont hors de notre contrôle."
+   ],
+   "mots": {
+    "mots": [
+     "abonnés",
+     "likes",
+     "jugement",
+     "jalousie"
+    ]
+   },
+   "textes": [
+    "abonnés",
+    "likes",
+    "jugement",
+    "jalousie"
+   ],
+   "sous_titres_caches": [
+    0,
+    1
+   ]
+  },
+  {
+   "geste": "final",
+   "phrases": [
+    "Si tu ne veux plus les subir,",
+    "pour enfin créer du contenu qui te ressemble,",
+    "abonne-toi."
+   ],
+   "mots": {
+    "repere": [
+     "subir",
+     "ressemble"
+    ]
+   }
+  }
+ ]
+}

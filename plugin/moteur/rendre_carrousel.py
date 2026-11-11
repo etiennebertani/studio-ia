@@ -112,7 +112,9 @@ html,body{width:1080px;height:1350px;overflow:hidden}
 .punch.blanc{background:#fff;color:var(--texte)}.punch.noir{background:#000;color:#fff}
 .p-texte{font-weight:500;font-size:53.33px;line-height:1.3;width:850px}
 .p-texte p+p{margin-top:69.3px}
-.p-pseudo{position:absolute;top:1147px;font-size:33.59px;font-weight:500;opacity:.6}
+.signature{position:absolute!important;left:0;right:0;top:1218px;text-align:center;font-size:36px;line-height:1.3;font-weight:400;opacity:.55}
+.progression{position:absolute!important;left:0;right:0;top:66px;display:flex;justify-content:center;opacity:.6}
+.progression svg{display:block;overflow:visible}
 """
 
 
@@ -204,8 +206,40 @@ def tweet(s, m):
 
 def punchline(s, m):
     theme = s.get("theme", "blanc")
-    return '<div class="slide punch {}"><div class="p-texte" data-mesure>{}</div><div class="p-pseudo">{}</div></div>'.format(
-        theme, paragraphes(s["paragraphes"], s.get("surligne"), couleur_surlignage(theme)), e(m.get("pseudo", "")))
+    return '<div class="slide punch {}"><div class="p-texte" data-mesure>{}</div></div>'.format(
+        theme, paragraphes(s["paragraphes"], s.get("surligne"), couleur_surlignage(theme)))
+
+
+SIGNES = ("texte-image-couverture", "texte-image", "texte", "punchline")
+AVEC_PROGRESSION = ("texte-image-couverture", "texte-image")
+
+
+def signature(m):
+    """Le pseudo en bas de la slide, comme sous le nom du style Tweet. Désactivable avec "signature": false."""
+    if m.get("signature", True) is False or not m.get("pseudo"):
+        return ""
+    return '<div class="signature">{}</div>'.format(e(m["pseudo"]))
+
+
+def progression(numero, total, m):
+    """Barre de progression discrète : un cercle par slide, reliés par un trait. Désactivable avec "progression": false."""
+    if m.get("progression", True) is False or total < 2:
+        return ""
+    pas, r = 26, 4.5
+    largeur = pas * (total - 1)
+    morceaux = []
+    for i in range(total):
+        x = i * pas
+        if i:
+            morceaux.append('<path d="M{:.1f} 0 L{:.1f} 0"/>'.format(x - pas + r + 3, x - r - 3))
+        if i + 1 < numero:
+            morceaux.append('<circle cx="{}" cy="0" r="{}" fill="currentColor" stroke="none"/>'.format(x, r))
+        elif i + 1 == numero:
+            morceaux.append('<circle cx="{}" cy="0" r="7.5"/><circle cx="{}" cy="0" r="2.6" fill="currentColor" stroke="none"/>'.format(x, x))
+        else:
+            morceaux.append('<circle cx="{}" cy="0" r="{}"/>'.format(x, r))
+    return ('<div class="progression"><svg width="{w}" height="16" viewBox="-8 -8 {w} 16" fill="none" stroke="currentColor" '
+            'stroke-width="1.6">{c}</svg></div>').format(w=largeur + 16, c="".join(morceaux))
 
 
 STYLES = {"texte-image-couverture": couverture, "texte-image": texte_image,
@@ -345,6 +379,13 @@ def main():
         page = navigateur.new_page(viewport={"width": LARGEUR, "height": HAUTEUR})
         for numero, slide in enumerate(donnees["slides"], 1):
             contenu = STYLES[slide["style"]](slide, marque)
+            ajout = ""
+            if slide["style"] in AVEC_PROGRESSION:
+                ajout += progression(numero, len(donnees["slides"]), marque)
+            if slide["style"] in SIGNES:
+                ajout += signature(marque)
+            if ajout and contenu.endswith("</div>"):
+                contenu = contenu[:-len("</div>")] + ajout + "</div>"
             fichier_html = sortie / ".slide.html"
             fichier_html.write_text("<!doctype html><meta charset=utf-8><style>{}</style>{}".format(entete, contenu),
                                     encoding="utf-8")

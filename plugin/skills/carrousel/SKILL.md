@@ -5,6 +5,8 @@ description: Fabrique des carrousels Instagram avec le Studio IA, à partir des 
 
 # Studio IA : carrousel
 
+Avant toute autre chose, applique en silence `${CLAUDE_PLUGIN_ROOT}/ressources/verification-ouverture.md`.
+
 La personne débute. Tutoie-la, sauf si elle préfère le vouvoiement. Une seule question par message, des mots simples, jamais d'erreur brute. Tu fais tout ce qui se fait au clavier.
 
 **Règle centrale : le texte appartient à la personne.** Tu le reprends mot pour mot. Tu ne le réécris pas, tu ne le raccourcis pas, tu ne le complètes pas. Si un changement semble utile, propose-le et attends son accord.
@@ -22,6 +24,8 @@ Lance `python3 "$M/verifier.py" --data "${CLAUDE_PLUGIN_DATA}"`. Si quelque chos
 Lis les marques dans `<branding>/*/marque.json`. S'il n'y en a aucune, explique qu'il faut d'abord définir son style et lance le skill `studio:style`. Si plusieurs marques existent, demande laquelle utiliser.
 
 Lis aussi, dans cette marque, `regles_style`, `reglages` et `regles_versions` s'ils existent. Ce sont les préférences déjà validées par la personne : tu les appliques à chaque carrousel sans les lui redemander. Une règle de style ne change jamais le texte : la règle centrale reste au-dessus.
+
+Si `<references>/Exemples de carrousel/<style>` existe, regarde ces exemples avant de produire : ils montrent le niveau validé pour ce style.
 
 Lis `~/Studio/mon-espace/.studio.json` : la clé `banque_notion` contient la source de la banque de contenu.
 
@@ -90,7 +94,14 @@ Si `regles_versions` le demande, ne garde que la version validée dans `final/`.
 
 Une fois le carrousel validé, ajoute-le à l'archive : `python3 "$M/archiver.py" --dossier <dossier du carrousel> --format carrousel --sujet "<titre>" --style "<style>" --structure "<structure>" --notion "<lien de la page>"`. Propose ensuite d'écrire sa légende avec le skill `studio:legende`. Quand le design et la légende sont validés, applique le skill `studio:drive`, section « Terminer un contenu validé ».
 
+**Exemple de style :** si ce style n'a pas encore d'exemple dans `<references>/Exemples de carrousel/`, ou si ce carrousel le montre mieux, copie ses slides finales dans `<references>/Exemples de carrousel/<style>/` et note-le dans `exemples.json`. N'enlève jamais un exemple sans accord.
+
+**Avant de figer un style :** lance `python3 "$M/controle_fin.py" style --nom "<nom du style>" --type carrousel`, puis vérifie chaque point de `a_confirmer`. Tant que `ok` vaut `false`, ne déclare pas le style figé : traite ce qui manque ou dis-le clairement.
+
 ## Règles
+
+- **Signature par défaut :** le moteur pose le pseudo de la marque en bas au centre, au même endroit sur tous les styles, sauf le Tweet qui l'a déjà sous le nom. La personne peut la retirer avec `"signature": false` dans sa `marque.json`.
+- **Barre de progression :** sur le style Texte + image, le moteur ajoute en haut au centre un cercle par slide, reliés par un trait. Elle se calcule seule selon le nombre de slides. Désactivable avec `"progression": false`.
 
 - **En cas de doute** sur un contenu, un fichier ou un statut, consulte Drive ou la banque Notion, et compare-les si besoin. La page Notion fait foi pour le statut, les fichiers sur Drive pour les finaux. Lecture seule, sauf accord.
 - Rien n'est publié par ce skill.

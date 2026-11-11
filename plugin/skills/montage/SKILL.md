@@ -5,6 +5,8 @@ description: Monte une vidéo à partir d'un rush brut dans le Studio IA. Demand
 
 # Studio IA : montage
 
+Avant toute autre chose, applique en silence `${CLAUDE_PLUGIN_ROOT}/ressources/verification-ouverture.md`.
+
 La personne débute. Tutoie-la, sauf si elle préfère le vouvoiement. Une seule question par message, des mots simples, jamais d'erreur brute. Tu fais tout ce qui se fait au clavier.
 
 Dans ce fichier :
@@ -22,6 +24,8 @@ Avant toute chose, lance `python3 "$M/chemins.py"`. Dans ce fichier, `<branding>
 - **Règles de base :** `${CLAUDE_PLUGIN_ROOT}/ressources/montage-base.json`. Communes à tous, mises à jour avec le Studio. Tu ne les modifies jamais pour une personne.
 - **Personnalisation :** `<branding>/<marque>/montage.json` et ses polices dans `<branding>/<marque>/polices/`. Mêmes noms que la base, seulement ce qui change. Une mise à jour n'y touche jamais.
 - **Cette vidéo seulement :** `ajustements` dans `travail/plan.json`.
+- **Règles fondamentales :** `${CLAUDE_PLUGIN_ROOT}/ressources/montage-regles-fondamentales.md`. Lis-les avant chaque montage : coupe, blancs, voix, son, calage, écran, contrôles. Elles valent pour tous les styles.
+- **Règles du style :** `${CLAUDE_PLUGIN_ROOT}/ressources/styles/<style>.md` quand le style a sa fiche (exemple : `infographie-minimale-reel.md`). Elles s'ajoutent aux règles fondamentales, jamais à leur place.
 
 Quand la même correction revient, propose de l'ajouter à sa personnalisation. Pour changer le seuil des blancs d'un style : `{"styles": {"yap": {"blanc_max": 0.3}}}`.
 
@@ -182,8 +186,21 @@ Avant de lui montrer la vidéo :
 2. `mots_manquants` et `mots_en_trop` doivent être vides, ou s'expliquer par une différence d'écoute sans importance. Si un mot manque vraiment, corrige `plan.json` et recommence.
 3. `plus_long_blanc` ne doit pas dépasser `blanc_limite`. La voix doit démarrer tout de suite : `voix_demarre_a` proche de 0.
 4. `doublons_son` liste les passages presque identiques qui se suivent : c'est là que peuvent se cacher des bafouillages. Vérifie-les, puis signale-les.
+5. **Origine :** `python3 "$M/controle_origine.py" "<contenu>/travail/export" "<contenu>/images" "<contenu>/b-roll"` doit renvoyer `ok`. Une marque « fait par IA » veut dire qu'un élément généré est entré dans le montage : dis lequel, propose un élément authentique, n'efface jamais la marque.
 
 Envoie ensuite la vidéo avec, en une phrase, sa durée exacte et ce qui a été enlevé. Donne la durée à chaque version, sans attendre qu'elle la demande. Donne les secondes de `raccords` à écouter en priorité. Dis ce que tu n'as pas pu vérifier.
+
+## 7 bis. Le son, le calage et les contrôles fins
+
+Pour les styles avec voix off animée ou sound design (infographie, et chaque style qui l'adopte). Pour l'infographie, écris d'abord le storyboard (`${CLAUDE_PLUGIN_ROOT}/ressources/styles/infographie-storyboard.md`), montre-le à la personne, puis fabrique. Les outils sont dans `$M/reel/` ; la caisse à outils du son est dans `${CLAUDE_PLUGIN_ROOT}/outils-son/` (Real SFX, uisfx, reel-sfx, sons déjà choisis) : tout est déjà là, rien à télécharger.
+
+1. **Calage des mots :** `$PY "$M/reel/transcrire_mots.py" voix.wav dtw.json`, puis `$PY "$M/reel/calage_mots.py" voix.wav dtw.json mots.json`.
+2. **Chercher un son :** d'abord `$PY "$M/reel/sons_openverse.py" chercher "<mots en anglais>"`, puis `telecharger <id> <dossier>` ; fais écouter des exemples sur l'animation avant de choisir. Note chaque son `a_crediter` pour la légende.
+3. **Poser les sons :** `$PY "$M/reel/sons.py" reperes.json voix.wav son.wav` (niveaux et calage mesurés, master -18 LUFS).
+4. **Contrôler avant d'envoyer :** `test_calage.py` (bloquant), `controle_zone.py video.mp4`, le résultat de `master.py`.
+5. **Revue des moments sans son :** `$PY "$M/reel/revue_sons.py" video_muette.mp4 reperes.json <travail>`. Regarde l'image de chaque moment, garde les vrais manques, propose pour chacun la nature du son selon la logique des règles fondamentales (section 4), et attends l'accord avant de les ajouter.
+
+Dès qu'une modification s'avère meilleure pour un style, dis-le en une phrase et propose où la ranger : règle de base du plugin (le créateur décide) ou réglage fin de la personnalisation.
 
 ## 8. Corriger
 
@@ -206,6 +223,8 @@ Avant de valider, vérifie que `marque.json` a une clé `client`, le nom court d
 Chaque b-roll utilisé laisse un extrait de 30 secondes au maximum, pris autour du moment utilisé, dans `b-roll/` du contenu, et il est inscrit au catalogue de `<b_roll>`. Son original n'est pas touché.
 
 **Exemple de style :** si ce style n'a pas encore d'exemple dans `07. Références/Exemples de montage`, ou si cette vidéo le montre mieux, lance `$PY "$M/monter.py" exemple --dossier "<contenu>" --note "<ce qu'elle montre>"`. Dis-le-lui en une phrase. Ces exemples servent de référence en cas de doute : tu ne les ouvres pas à chaque montage. Le registre est `exemples.json`, dans ce dossier.
+
+**Avant de figer un style :** lance `python3 "$M/controle_fin.py" style --nom "<nom du style>" --type reel`, puis vérifie chaque point de `a_confirmer`. Tant que `ok` vaut `false`, ne déclare pas le style figé : traite ce qui manque ou dis-le clairement.
 
 Si elle veut aussi tester la vidéo sans ses illustrations, ajoute `--aussi-sans-illustrations` : la même coupe sort sans images ni b-rolls.
 

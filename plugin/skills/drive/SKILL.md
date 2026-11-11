@@ -5,6 +5,8 @@ description: Branche le Studio IA sur un dossier Google Drive et termine un cont
 
 # Studio IA : Drive
 
+Avant toute autre chose, applique en silence `${CLAUDE_PLUGIN_ROOT}/ressources/verification-ouverture.md`.
+
 La personne débute. Tutoie-la, sauf si elle préfère le vouvoiement. Une seule question par message, des mots simples, jamais d'erreur brute.
 
 Dans ce fichier, `$M` désigne `${CLAUDE_PLUGIN_ROOT}/moteur`.
@@ -44,13 +46,16 @@ Si `banque_notion` n'est pas réglé, ou si le contenu ne vient pas d'une page d
    - Passe `Status` à `📦 Prêt`.
    - Ne change aucune autre propriété.
 7. **Vérifier.** Relis la page. Si le lien ou le statut ne correspond pas, dis-le clairement.
-8. **Fêter.** Compte les fiches au statut `📦 Prêt`, en mode `rows`, et dis par exemple : « C'est prêt ! Tu as 3 contenus en stock. » Donne le lien du dossier.
+8. **Contrôler.** Lance `python3 "$M/controle_fin.py" contenu --dossier "<dossier du contenu>"`, puis vérifie chaque point de `a_confirmer`. Tant que `ok` vaut `false`, traite ce qui manque ou dis-le clairement, et ne dis jamais que le contenu est prêt. Si le contrôle donne un Lien Drive différent de celui de la fiche (dossier renommé, déplacé ou fusionné), montre l'ancien et le nouveau, puis mets la fiche à jour avec l'accord de la personne.
+9. **Fêter.** Compte les fiches au statut `📦 Prêt`, en mode `rows`, et dis par exemple : « C'est prêt ! Tu as 3 contenus en stock. » Donne le lien du dossier.
 
 ## Depuis Drive vers l'ordinateur
 
 Seulement à la demande : quand la personne demande un fichier précis de son Drive, copie-le dans le bon dossier local du contenu. Il n'y a jamais de synchronisation automatique dans ce sens.
 
 ## Règles
+
+- **Chaque mise à jour d'un contenu déjà livré** (nouvelle version, slides remplacées, dossier renommé ou fusionné) repasse par l'envoi, l'attente et le contrôle de fin. Remplacer un fichier garde le même dossier Drive : le lien de la fiche reste bon, mais le contrôle le vérifie quand même.
 
 - La copie va de l'ordinateur vers Drive et ne supprime rien sur Drive.
 - Le plugin et les brouillons ne vont jamais sur Drive.

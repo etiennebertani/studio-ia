@@ -20,7 +20,7 @@ Un carrousel ajoute le numéro de slide : `26-11-marie-carrousel-mon-sujet-01-sl
 
 Le sujet commence toujours par le code du format. Le type reste dans la liste fermée.
 
-- Reels : `yap`, `yapp` (Yap+), `fce` (face caméra éducatif), `vlog`, `clean`, `os` (one shot), `tenshots`.
+- Reels : `yap`, `yapp` (Yap+), `fce` (face caméra éducatif), `vlog`, `clean`, `os` (one shot), `tenshots`, `infographie` (reel animé).
 - Carrousels : `tweet`, `txt` (texte), `txti` (texte + image), `punchline`, `infographie`.
 
 Exemples : `26-11-marie-reel-cc-yapp-mon-sujet-01.mp4`, `26-11-marie-carrousel-txti-mon-sujet-01-slide-01.jpg`.

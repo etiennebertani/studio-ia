@@ -13,6 +13,7 @@ import hashlib
 import json
 import re
 import shutil
+import time
 import subprocess
 import sys
 from pathlib import Path
@@ -99,6 +100,10 @@ def copier(source, cible):
     if identique(source, cible):
         return False
     cible.parent.mkdir(parents=True, exist_ok=True)
+    if cible.exists():
+        # Écrire dans le fichier existant : Google Drive garde son identifiant.
+        shutil.copyfile(source, cible)
+        return True
     temporaire = cible.with_name(cible.name + ".envoi")
     shutil.copyfile(source, temporaire)
     temporaire.replace(cible)
@@ -143,11 +148,16 @@ def cmd_etat(args):
     fichiers = liste_a_envoyer(contenu)
     manquants = [str(f.relative_to(contenu)) for f in fichiers
                  if not identique(f, cible / f.relative_to(contenu))]
-    sans_id = [str(f.relative_to(contenu)) for f in fichiers
-               if not manquants and not identifiant(cible / f.relative_to(contenu))]
+    sans_id, a_verifier = [], []
+    if not manquants:
+        limite = time.time() - 3600
+        for f in fichiers:
+            copie = cible / f.relative_to(contenu)
+            if not identifiant(copie):
+                (a_verifier if copie.stat().st_mtime < limite else sans_id).append(str(f.relative_to(contenu)))
     id_dossier = identifiant(cible) if cible.is_dir() else ""
     arrive = bool(fichiers) and not manquants and not sans_id and bool(id_dossier)
-    repondre(arrive=arrive, fichiers=len(fichiers), manquants=manquants, en_attente=sans_id,
+    repondre(arrive=arrive, fichiers=len(fichiers), manquants=manquants, en_attente=sans_id, a_verifier=a_verifier,
              lien="https://drive.google.com/drive/folders/" + id_dossier if arrive else "")
     sys.exit(0 if arrive else 2)
 

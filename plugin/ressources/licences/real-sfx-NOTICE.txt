@@ -1,0 +1,8 @@
+## Licences
+
+Scripts: MIT. uisfx (bundled mp3): code MIT, sounds CC0. Your own sound libraries keep their own licences; this skill
+never copies them anywhere, it only reads them.
+
+Made by Alexander Korbanov at [Clipwing](https://clipwing.pro).
+
+Source : https://github.com/Clipwing/skills (skills/real-sfx), commit edbefcbc3474869e6cc1e8a7ca583b0efd0dab7e. Le dépôt ne contient pas de fichier LICENSE séparé : la licence MIT des scripts est celle déclarée ci-dessus par l'auteur.

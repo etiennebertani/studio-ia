@@ -410,14 +410,28 @@ def fabriquer(dossier, travail, projet, plan, mots, r, sortie, avec_sous_titres=
         filtres.append(f"{etiquette}subtitles=textes.ass:fontsdir=polices,format=yuv420p[vout]")
     else:
         filtres.append(f"{etiquette}format=yuv420p[vout]")
-    filtres.append(f"[0:a]apad=pad_dur=4,loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000,atrim=0:{total:.4f}[aout]")
+    filtres.append(f"[0:a]apad=pad_dur=4,aresample=48000,atrim=0:{total:.4f}[aout]")   # le volume final se fait après, avec master.py
     sortie = Path(sortie).resolve()
     sortie.parent.mkdir(parents=True, exist_ok=True)
     commande = [str(c).replace(str(cache / "liste.txt"), "cache/liste.txt") for c in commande]
     commande += ["-filter_complex", ";".join(filtres), "-map", "[vout]", "-map", "[aout]", "-c:v", "libx264", "-preset", "medium",
                  "-crf", "16", "-r", str(FPS), "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", "-t", f"{total:.3f}", str(sortie)]
     son.lancer(commande, cwd=rendu)
+    masteriser(sortie, float(r["regles"].get("master_lufs", -15)))
     return {"video": str(sortie), "duree": round(total, 2), "tete": tete, "sous_titres_y": y_st, "titre": infos_titre, "alertes": alertes}
+
+
+def masteriser(video, cible):
+    """Volume final : intégré à la cible (master_lufs des règles : -15 LUFS, le niveau validé des Yap), plafond -3 dBFS,
+    limiteur qui anticipe les crêtes (moteur/reel/master.py) : même volume qu'avant, mais plus jamais de saturation."""
+    with tempfile.TemporaryDirectory() as d:
+        brut, propre, tmp = Path(d) / "brut.wav", Path(d) / "propre.wav", Path(d) / ("video" + Path(video).suffix)
+        son.lancer([son.ffmpeg(), "-y", "-v", "error", "-i", video, "-vn", "-ac", "2", "-ar", "48000", brut])
+        subprocess.run([sys.executable, str(Path(__file__).parent / "reel" / "master.py"), str(brut), str(propre), str(cible)],
+                       check=True, capture_output=True)
+        son.lancer([son.ffmpeg(), "-y", "-v", "error", "-i", video, "-i", propre, "-map", "0:v", "-map", "1:a", "-c:v", "copy",
+                    "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", "-shortest", tmp])
+        shutil.move(str(tmp), str(video))
 
 
 def derniere_version(travail):

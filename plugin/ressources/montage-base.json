@@ -2,6 +2,7 @@
   "_note": "Règles de base du montage, communes à tous et mises à jour avec le Studio. Ne rien personnaliser ici : la personnalisation va dans 00. Branding/<marque>/montage.json, avec les mêmes noms.",
   "regles": {
     "marge": 0.12,
+    "master_lufs": -15,
     "attaque": 0.08,
     "fin": 0.4,
     "repetition_max": 0.6,

@@ -5,6 +5,8 @@ description: Crée, modifie ou fait varier les styles de carrousel d'une personn
 
 # Studio IA : style
 
+Avant toute autre chose, applique en silence `${CLAUDE_PLUGIN_ROOT}/ressources/verification-ouverture.md`.
+
 La personne débute. Tutoie-la, sauf si elle préfère le vouvoiement. Une seule question par message, des mots simples, jamais d'erreur brute. Montre plutôt que d'expliquer : un aperçu vaut mieux qu'une question sur les couleurs. Tu fais tout ce qui se fait au clavier.
 
 Dans ce fichier, `$M` désigne `${CLAUDE_PLUGIN_ROOT}/moteur` et `$PY` désigne `${CLAUDE_PLUGIN_DATA}/venv/bin/python`.

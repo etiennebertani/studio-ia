@@ -5,6 +5,8 @@ description: Configure le ton de voix d'une personne et lui propose des légende
 
 # Studio IA : légende
 
+Avant toute autre chose, applique en silence `${CLAUDE_PLUGIN_ROOT}/ressources/verification-ouverture.md`.
+
 La personne débute. Tutoie-la, sauf si elle préfère le vouvoiement. Une seule question par message, des mots simples, jamais d'erreur brute.
 
 Dans ce fichier, `$M` désigne `${CLAUDE_PLUGIN_ROOT}/moteur`.
@@ -75,7 +77,9 @@ Quand elle corrige, si la même préférence revient, propose de l'ajouter à `r
 
 Les trois versions restent dans `final/legendes.txt`, pour pouvoir choisir ou ajuster plus tard. Si elle en corrige une, mets-la à jour dans ce fichier, puis relance `archiver.py` sur ce contenu.
 
-Tous les 20 nouveaux contenus environ dans l'archive, propose de mettre à jour `voix.md`. Montre ce qui change et attends son accord : ne modifie jamais sa voix en silence.
+**Garder sa voix à jour.** La personne peut avoir sa ressource ton de voix ailleurs que dans `voix.md` : une page Notion, un document Drive, autre chose. Demande-le une seule fois, quand sa voix est validée, et note l'emplacement dans `ressource_voix` de sa `marque.json`. S'il n'y en a pas, `voix.md` suffit.
+
+Reviens sur sa voix à deux moments : quand elle valide sa voix ou une correction de sa voix, et tous les 30 à 50 nouveaux contenus absorbés, si tu vois une évolution, un changement ou une nouveauté. Montre ce qui change et attends son accord : ne modifie jamais sa voix en silence. Une fois l'accord donné, mets à jour `voix.md` et la ressource, à l'endroit où elle se trouve, puis relis-la pour vérifier. Note la date dans les deux.
 
 **Si le contenu est fini et validé et que Drive est branché :** applique le skill `studio:drive`, section « Terminer un contenu validé ». Il ajoute la légende, le lien Drive et passe le statut à `📦 Prêt`.
 
