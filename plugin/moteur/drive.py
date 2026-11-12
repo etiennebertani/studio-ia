@@ -76,7 +76,7 @@ def controle(contenu):
     """Renvoie les raisons qui empêchent de considérer le contenu comme fini."""
     final = contenu / "final"
     raisons = []
-    if not final.is_dir() or not any(f.suffix.lower() in EXTENSIONS_VISUELS for f in final.iterdir()):
+    if not final.is_dir() or not any(f.suffix.lower() in EXTENSIONS_VISUELS for f in final.rglob("*")):
         raisons.append("design_absent")
     legendes = final / "legendes.txt"
     if not legendes.is_file() or not legendes.read_text(encoding="utf-8").strip():

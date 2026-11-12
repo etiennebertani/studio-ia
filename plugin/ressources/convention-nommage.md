@@ -15,6 +15,7 @@ aa-mm-client-type-sujet-numéro.ext
 | `numéro` | version de ce contenu dans le mois, sur 2 chiffres. |
 
 Un carrousel ajoute le numéro de slide : `26-11-marie-carrousel-mon-sujet-01-slide-01.jpg`.
+Un carrousel en plusieurs variantes range chacune dans son dossier de `final/` (`final/noir/`, `final/blanc/`), avec `texte.txt` et `legendes.txt` à côté. Les slides portent une date de prise de vue décalée d'une seconde, dans l'ordre (`moteur/ranger_variantes.py`).
 
 ## Code de format
 

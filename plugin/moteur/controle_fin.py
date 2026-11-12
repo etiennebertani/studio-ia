@@ -69,7 +69,7 @@ def controle_contenu(dossier):
     dossier = Path(dossier)
     manquants, a_confirmer = [], []
     final = dossier / "final"
-    medias = [f for f in final.iterdir() if f.is_file() and f.suffix.lower() in (".jpg", ".jpeg", ".png", ".mp4", ".mov")] if final.is_dir() else []
+    medias = [f for f in final.rglob("*") if f.is_file() and f.suffix.lower() in (".jpg", ".jpeg", ".png", ".mp4", ".mov")] if final.is_dir() else []
     if not medias:
         manquants.append("aucun fichier final")
     for fichier in medias:

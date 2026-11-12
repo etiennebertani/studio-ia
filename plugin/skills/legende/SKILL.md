@@ -87,6 +87,22 @@ Reviens sur sa voix à deux moments : quand elle valide sa voix ou une correctio
 
 Si cette section existe déjà, montre-lui l'ancienne et la nouvelle, et demande laquelle garder.
 
+## 5. Relire les publications
+
+À faire à l'ouverture du Studio (skill `studio:start`) et dès que la personne dit « relis mes posts ». Après publication, la personne retouche souvent sa légende : la version publiée est sa vraie voix, elle doit remplacer la proposition partout.
+
+1. **Lire le profil.** Si un outil de publication est branché (Zernio, API officielle d'Instagram ou équivalent) et qu'il sait lister les posts publiés avec leur lien et leur légende, utilise-le en priorité : c'est plus fiable qu'un navigateur. Sinon, prends le pseudo dans `marque.json`. Ouvre `https://www.instagram.com/<pseudo>/` dans **Google Chrome** (Claude in Chrome) ; s'il n'est pas disponible, demande à la personne d'ouvrir Chrome, sinon passe par le navigateur de l'app. Lecture seule : refuse les cookies optionnels, ne te connecte pas, ne publie, n'aime ni ne commente rien. Le profil se lit sans connexion. Relève les liens des posts et des reels (`/p/` et `/reel/`) de la personne, 12 au plus.
+2. **Comparer.** Lance `python3 "$M/relire_publications.py" <liens>`. Pour chaque post :
+   - `a_jour` ou `inconnu` : rien à faire, n'en parle pas (un post `inconnu` a été fait avant ou en dehors du Studio) ;
+   - `doute` : montre la légende enregistrée et la légende publiée, et demande s'il s'agit du même contenu ;
+   - `certain` : passe à l'étape 3 sans demander.
+3. **Mettre à jour, quand c'est certain.** Ce cas précis se fait sans redemander (règle de base du plugin) :
+   - relance avec `--ecrire` : la légende publiée passe en tête de `final/legendes.txt`, avec la date et le lien du post ; les propositions restent en dessous ;
+   - si Drive est branché, `python3 "$M/drive.py" envoyer --contenu "<dossier>"` ;
+   - dans la fiche Notion du contenu (ouverte en mode `rows`, elle fait foi) : ajoute en tête de la section `✍️ Légende` un titre `✅ Publiée le <date>`, le lien du post et la légende publiée ; renomme l'ancienne `Longue` en `Longue (proposée avant publication)` ; passe `Status` à `✅ Publié` et remplis `Publication` avec la date du post. N'efface rien et ne touche à aucune autre propriété. Si la fiche n'est ni `📦 Prêt` ni `✅ Publié`, ou si la correspondance avec la fiche n'est pas évidente, c'est un doute : demande.
+   - Dis ensuite en une phrase ce qui a changé et où.
+4. **Nourrir la voix.** Chaque légende publiée est un exemple de sa vraie voix : ajoute-la aux exemples de `voix.md` (et de sa ressource voix) au prochain point de voix de la section 4, en notant ce qu'elle a changé par rapport à la proposition (ce qu'elle ajoute, ce qu'elle retire). Signale-lui ses fautes de frappe sans jamais corriger ses mots.
+
 ## Règles
 
 - Rien n'est publié par ce skill.
