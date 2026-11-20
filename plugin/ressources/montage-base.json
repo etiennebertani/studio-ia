@@ -57,7 +57,7 @@
     "mots_par_bloc": 3,
     "ecart_menton": 70,
     "y_defaut": 1126,
-    "y_max": 1380
+    "y_max": 1380, "largeur_max": 578
   },
   "images": {
     "largeur_max": 250,
@@ -138,6 +138,19 @@
         "marge_apres": 0.15
       },
       "code": "yapp"
+    },
+    {
+      "id": "temoignage-video",
+      "nom": "Témoignage vidéo",
+      "pour": "Une personne raconte son expérience dans une visio ou une interview. Ses mots seulement, en 9:16, en moins d'une minute.",
+      "disponible": true,
+      "habillage": false,
+      "blanc_max": 0.25,
+      "code": "temoignage",
+      "prerequis": [
+        {"id": "rush", "quoi": "L'enregistrement de la visio ou de l'interview", "besoin": "obligatoire", "qui": "toi"},
+        {"id": "accord", "quoi": "L'accord de la personne filmée pour le montage", "besoin": "obligatoire", "qui": "toi"}
+      ]
     },
     {
       "id": "face-camera",

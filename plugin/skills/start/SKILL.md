@@ -64,7 +64,7 @@ python3 "${CLAUDE_PLUGIN_ROOT}/moteur/preparer.py" --data "${CLAUDE_PLUGIN_DATA}
 
 Affiche uniquement ce qui existe dans `modules_disponibles`. Si la liste est vide, dis : « Ton Studio est prêt. Les premiers outils de création arrivent bientôt. »
 
-Si `style` est disponible et que `<branding>/` ne contient aucune marque, propose de commencer par créer son style avec le skill `studio:style`.
+Si `style` est disponible et que `<branding>/` ne contient aucune marque, propose de commencer par créer son style avec le skill `studio:style`, en partant de la bibliothèque des styles d'Etienne Bertani, le créateur du Studio, ou de ses propres inspirations.
 
 Si une marque a un `pseudo` Instagram, relis ses dernières publications avant le menu (skill `studio:legende`, section 5). Si une légende a changé, dis en une phrase ce que tu as mis à jour ou ce que tu veux vérifier avec elle.
 

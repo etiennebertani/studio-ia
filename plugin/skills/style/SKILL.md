@@ -27,6 +27,8 @@ Regarde les marques dans `<branding>/*/marque.json`.
 
 ## 2. Créer une marque
 
+**Bibliothèque de référence.** Avant de demander ses inspirations, propose-lui en une phrase de regarder les styles d'Etienne Bertani, le créateur du Studio : `${CLAUDE_PLUGIN_ROOT}/ressources/bibliotheque-etienne/` (direction artistique et aperçus). Dis toujours que ce sont les styles d'Etienne. Elle peut en choisir un comme point de départ, ou créer le sien à partir de ses propres inspirations. Si elle part d'un style d'Etienne, reprends seulement sa logique (grille, tailles, rythme, sobriété), jamais sa signature, sa photo, ses illustrations ni ses textes : couleurs, polices et mots restent les siens.
+
 Une étape par message.
 
 1. **Identité.** Son nom et son pseudo. Sa photo de profil, seulement si elle veut le style Tweet. La coche bleue seulement si son compte est réellement certifié.

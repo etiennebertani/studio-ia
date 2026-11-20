@@ -168,9 +168,15 @@ def _couleur(hexa):
     return "&H00{}{}{}".format(h[4:6], h[2:4], h[0:2]).upper()
 
 
-def blocs_sous_titres(mots, nombre):
+def blocs_sous_titres(mots, nombre, fonte=None, largeur_max=None):
+    """Blocs de sous-titres : au plus `nombre` mots, coupés en fin de phrase et sur les blancs. Avec une fonte et une
+    largeur maximale, un bloc ne dépasse jamais cette largeur (les icônes d'Instagram commencent à x 839)."""
     blocs, courant = [], []
     for i, mot in enumerate(mots):
+        if fonte is not None and largeur_max and courant and \
+                fonte.getlength(" ".join(m["w"].rstrip(".,;:") for m in courant + [mot])) > largeur_max:
+            blocs.append(courant)
+            courant = []
         courant.append(mot)
         fin_phrase = mot["w"][-1:] in ".?!,;:"
         trou = i + 1 < len(mots) and mots[i + 1]["s"] - mot["e"] > 0.45
@@ -194,7 +200,8 @@ def ecrire_sous_titres(mots, r, police, y, total, sortie):
               "Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding",
               f"Style: Sous,{famille},{r['taille']},{couleur},{couleur},&H00000000,&H80000000,{gras},0,0,0,100,100,0,0,1,0,{r['ombre']},5,60,60,0,1",
               "", "[Events]", "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text"]
-    blocs = blocs_sous_titres(mots, r["mots_par_bloc"])
+    fonte = ImageFont.truetype(str(police), r["taille"])
+    blocs = blocs_sous_titres(mots, r["mots_par_bloc"], fonte, r.get("largeur_max"))
     for i, bloc in enumerate(blocs):
         fin = min(bloc[-1]["e"] + 0.25, blocs[i + 1][0]["s"] if i + 1 < len(blocs) else total)
         texte = " ".join(m["w"].rstrip(".,;:") for m in bloc).replace("{", "(").replace("}", ")")

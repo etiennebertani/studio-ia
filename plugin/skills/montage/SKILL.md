@@ -25,7 +25,7 @@ Avant toute chose, lance `python3 "$M/chemins.py"`. Dans ce fichier, `<branding>
 - **Personnalisation :** `<branding>/<marque>/montage.json` et ses polices dans `<branding>/<marque>/polices/`. Mêmes noms que la base, seulement ce qui change. Une mise à jour n'y touche jamais.
 - **Cette vidéo seulement :** `ajustements` dans `travail/plan.json`.
 - **Règles fondamentales :** `${CLAUDE_PLUGIN_ROOT}/ressources/montage-regles-fondamentales.md`. Lis-les avant chaque montage : coupe, blancs, voix, son, calage, écran, contrôles. Elles valent pour tous les styles.
-- **Règles du style :** `${CLAUDE_PLUGIN_ROOT}/ressources/styles/<style>.md` quand le style a sa fiche (exemple : `infographie-minimale-reel.md`). Elles s'ajoutent aux règles fondamentales, jamais à leur place.
+- **Règles du style :** `${CLAUDE_PLUGIN_ROOT}/ressources/styles/<style>.md` quand le style a sa fiche (exemples : `infographie-minimale-reel.md`, `temoignage-video.md`). Elles s'ajoutent aux règles fondamentales, jamais à leur place. **Témoignage vidéo** : transcript complet et script proposé avec les raisons de chaque passage, validés avant tout montage (voir sa fiche).
 
 Quand la même correction revient, propose de l'ajouter à sa personnalisation. Pour changer le seuil des blancs d'un style : `{"styles": {"yap": {"blanc_max": 0.3}}}`.
 

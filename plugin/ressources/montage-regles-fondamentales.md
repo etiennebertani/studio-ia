@@ -45,6 +45,7 @@ Elles valent pour tous les styles de montage du Studio IA. Chaque style ajoute s
 
 - La safe zone la plus stricte des plateformes, plus 20 px de marge (`ressources/zones-securite.json`). Vérifiée par programme sur les images rendues, jamais à l'œil.
 - Sous-titres à la taille et à la graisse du carrousel du même style. Signature toujours au même endroit.
+- **Largeur des sous-titres : 578 px au plus, centrés** (`largeur_max` de `montage-base.json`). Les icônes d'Instagram (j'aime, commentaires, partage) commencent à x 839 entre y 907 et 1484 : un sous-titre plus large passerait dessous. Un bloc trop large est coupé en deux, même s'il a moins de 3 mots.
 
 ## 7. Les contrôles avant chaque envoi
 
@@ -61,3 +62,10 @@ Elles valent pour tous les styles de montage du Studio IA. Chaque style ajoute s
 Dès qu'une modification faite pendant un montage s'avère meilleure pour un style, le Studio le dit en une phrase et propose où la ranger :
 - **règle de base du plugin** (décision du créateur du plugin) ;
 - **réglage fin de la personnalisation** (la personne ou l'élève ; la base ne bouge pas).
+
+## 9. Le module d'effets (repris de Justyn Berkovits)
+
+- **La direction artistique de la personne est la seule source de vérité, à tous les niveaux.** Le module ne garde aucune direction artistique à lui : polices, couleurs, accroche, sous-titres, mise en page et mouvements viennent de la marque et des styles configurés dans le Studio.
+- **On prend ses fonctionnalités, jamais son dessin.** Détourage, rendu, composition derrière ou devant la personne : oui. Ses cartes, ses effets et ses gabarits tels qu'ils sont dessinés : non. Une infographie ou une carte de chiffres se dessine dans la grammaire de nos styles (Infographie minimale : cercle et point, traits fins, Poppins, centrage, minuscules, sobriété), avec le moteur du module si besoin.
+- **Pas d'effet spectaculaire par défaut.** Le Studio reste dans ce qui est configuré. Un effet du module n'est proposé que si la personne le demande, et il passe d'abord dans sa DA.
+- **Pas de suivi du visage pour l'instant** : seulement si la personne le demande.
