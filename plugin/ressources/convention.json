@@ -1,5 +1,5 @@
 {
- "version": "1.6",
+ "version": "1.7",
  "date": "2026-11-21",
  "doc": "La convention de nommage en données. Le moteur (moteur/nommage.py) ne lit que ce fichier et l'espace : ajouter un type ici le rend valable partout.",
  "types": {
@@ -132,31 +132,31 @@
  ],
  "exemples": {
   "valides": [
-   "26-11-lsj-reel-cc-01-plat-signature-v1.mp4",
-   "26-11-lsj-reel-nocc-01-plat-signature-v1.mp4",
+   "26-11-bistrot-reel-cc-01-plat-signature-v1.mp4",
+   "26-11-bistrot-reel-nocc-01-plat-signature-v1.mp4",
    "26-11-etienne-reel-cc-03-yapp-mon-sujet-v1.mp4",
-   "26-11-lsj-broll-1-cuisine-dressage-03.mp4",
-   "26-11-bdp-post-terrasse-coucher-soleil-02-v1.jpg",
-   "26-11-andrea-carrousel-nouvelle-carte-01-v1-slide-02.jpg",
+   "26-11-bistrot-broll-1-cuisine-dressage-03.mp4",
+   "26-11-comptoir-post-terrasse-coucher-soleil-02-v1.jpg",
+   "26-11-camille-carrousel-nouvelle-carte-01-v1-slide-02.jpg",
    "26-11-etienne-carrousel-txti-mon-sujet-01-v1-slide-01.jpg",
-   "26-11-andrea-video-nocc-interview-chef-01-v1.mp4",
+   "26-11-camille-video-nocc-interview-chef-01-v1.mp4",
    "26-11-moulin-visuel-concours-été-01-v1.jpg",
-   "26-11-lsj-carte-hiver-réduite-a4-01.pdf",
-   "26-11-lsj-carte-hiver-vins-boissons-140x297-01.pdf",
-   "26-11-bdp-carte-hiver-digitale-food-boissons-01.pdf",
+   "26-11-bistrot-carte-hiver-réduite-a4-01.pdf",
+   "26-11-bistrot-carte-hiver-vins-boissons-140x297-01.pdf",
+   "26-11-comptoir-carte-hiver-digitale-food-boissons-01.pdf",
    "26-11-asana-facture-inv-eu-10940503-01.pdf",
    "26-08-dougs-facture-1524498-01.pdf",
    "26-10-revolut-releve-octobre-01.pdf",
    "26-11-meta-recu-carte-7189-01.pdf",
    "26-11-moulin-contrat-prestation-cm-01.pdf",
-   "26-11-speak-doc-convention-de-nommage-01.md",
+   "26-11-exemple-doc-convention-de-nommage-01.md",
    "26-11-etienne-reel-cc-03-yapp-mon-sujet-v2.mp4",
-   "26-11-andrea-carrousel-nouvelle-carte-01-v2-slide-01.jpg"
+   "26-11-camille-carrousel-nouvelle-carte-01-v2-slide-01.jpg"
   ],
   "dossiers_valides": [
-   "26-11-andrea-rushs-mensuels",
-   "26-andrea-rushs-extra",
-   "26-11-lsj-cartes-hiver"
+   "26-11-camille-rushs-mensuels",
+   "26-camille-rushs-extra",
+   "26-11-bistrot-cartes-hiver"
   ],
   "invalides": [
    [
@@ -164,39 +164,39 @@
     "majuscules, espaces"
    ],
    [
-    "26-11-lsj-reel-cc-plat-signature-01.mp4",
+    "26-11-bistrot-reel-cc-plat-signature-01.mp4",
     "réel à l'ancien format"
    ],
    [
-    "26-11-andrea-reel-01-nouvelle-carte.mp4",
+    "26-11-camille-reel-01-nouvelle-carte.mp4",
     "type absent"
    ],
    [
-    "26-11-lsj-broll-1.cuisine-dressage-03.mp4",
+    "26-11-bistrot-broll-1.cuisine-dressage-03.mp4",
     "point dans le nom"
    ],
    [
-    "26-11-andrea-carrousel-carte-slide-02.jpg",
+    "26-11-camille-carrousel-carte-slide-02.jpg",
     "numéro du carrousel manquant"
    ],
    [
-    "26_11_andrea_post_terrasse_01.jpg",
+    "26_11_camille_post_terrasse_01.jpg",
     "underscores"
    ],
    [
-    "BDP - Carte petit déjeuner - A5.pdf",
+    "COMPTOIR - Carte petit déjeuner - A5.pdf",
     "majuscules, espaces, pas de date"
    ],
    [
-    "26-11-bdp-carte-hiver-vitrine-46,5x34,5-01.pdf",
+    "26-11-comptoir-carte-hiver-vitrine-46,5x34,5-01.pdf",
     "virgule"
    ],
    [
-    "26-11-lsj-menu-hiver-a4-01.pdf",
+    "26-11-bistrot-menu-hiver-a4-01.pdf",
     "menu n'est pas un type"
    ],
    [
-    "26-11-lsj-carte-hiver-réduite-01.pdf",
+    "26-11-bistrot-carte-hiver-réduite-01.pdf",
     "format de carte manquant"
    ],
    [
@@ -212,15 +212,15 @@
     "virgule"
    ],
    [
-    "26-11-lsj-reel-cc-01-plat-signature.mp4",
+    "26-11-bistrot-reel-cc-01-plat-signature.mp4",
     "version manquante"
    ],
    [
-    "26-11-andrea-carrousel-nouvelle-carte-01-slide-01-v2.jpg",
+    "26-11-camille-carrousel-nouvelle-carte-01-slide-01-v2.jpg",
     "version après la slide"
    ],
    [
-    "26-11-lsj-broll-1-cuisine-dressage-03-v1.mp4",
+    "26-11-bistrot-broll-1-cuisine-dressage-03-v1.mp4",
     "un b-roll n'a pas de version"
    ],
    [
@@ -228,7 +228,7 @@
     "une pièce n'a pas de version"
    ],
    [
-    "26-11-lsj-reel-cc-01-plat-signature-v01.mp4",
+    "26-11-bistrot-reel-cc-01-plat-signature-v01.mp4",
     "version écrite v01"
    ]
   ],
@@ -238,11 +238,11 @@
     "préfixe, majuscule, mois en lettres"
    ],
    [
-    "26-09-andrea-rushs-mensuels-septembre",
+    "26-09-camille-rushs-mensuels-septembre",
     "mois écrit deux fois"
    ],
    [
-    "26-07-rush-maonas-juillet",
+    "26-07-rush-atelier-juillet",
     "ordre inversé"
    ],
    [

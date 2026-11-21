@@ -83,7 +83,7 @@ def ecrire_config(valeurs):
 def modules_disponibles():
     """Les modules de création réellement présents dans le plugin."""
     dossier = RACINE_PLUGIN / "skills"
-    return [nom for nom in ("style", "carrousel", "legende", "drive", "montage", "story", "post")
+    return [nom for nom in ("style", "carrousel", "legende", "drive", "montage", "story", "post", "regles")
             if (dossier / nom / "SKILL.md").is_file()]
 
 

@@ -68,7 +68,7 @@ Si `style` est disponible et que `<branding>/` ne contient aucune marque, propos
 
 Si une marque a un `pseudo` Instagram, relis ses dernières publications avant le menu (skill `studio:legende`, section 5). Si une légende a changé, dis en une phrase ce que tu as mis à jour ou ce que tu veux vérifier avec elle.
 
-Termine toujours en disant ce que la personne peut faire ensuite.
+Termine toujours par le menu **en boutons**, avec l'outil de question à choix : au plus quatre boutons, les plus utiles maintenant en premier (par exemple Drive ou Légende quand des contenus sont prêts, Carrousel ou Montage sinon), et la réponse libre (« Autre ») pour le reste. Écris au-dessus, en une ligne, toutes les commandes disponibles, pour que la personne sache que les autres existent. Sans outil de question à choix, une liste numérotée courte.
 
 ## Règles
 

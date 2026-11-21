@@ -9,11 +9,11 @@ Il lit deux couches :
      --espace <dossier ou fichier>, la variable SOCLE_ESPACE, puis ~/Socle/espaces/<nom>/espace.json.
      Sans espace, seule la convention générique s'applique.
 
-    python3 nommage.py verifier <nom> [<nom>...] [--restaurant] [--espace speak]
+    python3 nommage.py verifier <nom> [<nom>...] [--restaurant] [--espace <espace>]
     python3 nommage.py dossier <nom> [<nom>...]
     python3 nommage.py sujet "<texte>"
     python3 nommage.py clients <nom> [<nom>...]
-    python3 nommage.py piece --tiers <nom court> --type facture --date 2026-11-03 --reference "INV-EU-1094" --ext pdf [--dossier <destination>] [--espace speak]
+    python3 nommage.py piece --tiers <nom court> --type facture --date 2026-11-03 --reference "INV-EU-1094" --ext pdf [--dossier <destination>] [--espace <espace>]
     python3 nommage.py carrousel --dossier <final> --client <client> --style <style> --sujet "<sujet>" [--periode aa-mm] [--numero 2] [--version 2]
     python3 nommage.py version
 
@@ -41,7 +41,7 @@ MOTS_SUJET_MAX = 6
 # ---------- espace ----------
 
 def charger_espace(espace=None):
-    """L'espace de la personne, ou None. `espace` : nom (speak), dossier ou fichier espace.json."""
+    """L'espace de la personne, ou None. `espace` : nom (par exemple « mon-entreprise »), dossier ou fichier espace.json."""
     espace = espace or os.environ.get("SOCLE_ESPACE")
     if not espace:
         return None

@@ -1,6 +1,6 @@
 """Renommer des fichiers déjà là, sur liste validée, avec un journal pour revenir en arrière.
 
-    python3 renommer.py proposer <dossier> --tiers <nom court> [--type facture] [--espace speak]
+    python3 renommer.py proposer <dossier> --tiers <nom court> [--type facture] [--espace <espace>]
         → écrit une liste « ancien → nouveau » (CSV) sans rien renommer, et l'affiche.
     python3 renommer.py appliquer <liste.csv>
         → renomme seulement les lignes « ok » (que la personne a pu corriger ou retirer), écrit un journal.

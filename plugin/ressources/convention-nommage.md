@@ -1,4 +1,4 @@
-# CONVENTION DE NOMMAGE — v1.6
+# CONVENTION DE NOMMAGE — v1.7
 
 **Document de référence unique**, pour les contenus, les pièces comptables et les documents. Tous les skills (Studio, Secrétaire, assistant Drive) l'appliquent avec le même moteur.
 
@@ -9,9 +9,10 @@
 Source : le Socle (`~/Socle`), recopié dans chaque skill et sur le Drive à chaque mise à jour. Ne modifie jamais une copie : modifie le Socle.
 
 > **Nouveautés**
+> - **v1.7 (21/11/2026) :** exemples et historique rendus neutres (aucun nom d'entreprise ni de client) ; les règles ne changent pas.
 > - **v1.6 (21/11/2026) :** les **versions** : les contenus finissent par `-v1` (la principale), `-v2`, `-v3` pour les variantes. Le numéro dit quel contenu c'est, le `v` dit quelle version.
-> - **v1.5 (21/11/2026) :** une seule convention pour SPEAK, le Studio et la Secrétaire (fusion de la v1.4 SPEAK, de la v1.1 et de la convention du Studio). Nouveaux types **pièces comptables** (`facture`, `avoir`, `recu`, `releve`, `devis`, `contrat`) et **`doc`**. Le numéro d'un réel est son **rang dans le mois**. Codes de format du Studio intégrés. Noms courts et chemins déplacés dans l'espace.
-> - **v1.4 (18/11/2026) :** type `carte`, noms courts `lsj` et `bdp`.
+> - **v1.5 (21/11/2026) :** une seule convention pour l'entreprise, le Studio et la Secrétaire (fusion des conventions précédentes). Nouveaux types **pièces comptables** (`facture`, `avoir`, `recu`, `releve`, `devis`, `contrat`) et **`doc`**. Le numéro d'un réel est son **rang dans le mois**. Codes de format du Studio intégrés. Noms courts et chemins déplacés dans l'espace.
+> - **v1.4 (18/11/2026) :** type `carte`, deux noms courts de clients.
 > - **v1.3 (16/11/2026) :** dossiers de rushs.
 > - **v1.2 (16/11/2026) :** les réels ont leur propre ordre ; cc et nocc dans deux dossiers.
 
@@ -42,7 +43,7 @@ aa-mm-[qui]-[type]-[sujet]-[numéro].ext                ← b-rolls, cartes, pi�
 | Champ | Règle | Exemple |
 |---|---|---|
 | `aa-mm` | année et mois sur 2 chiffres (voir « Quel mois ? ») | `26-11` |
-| `qui` | nom court du client ou du fournisseur, acté dans l'espace | `lsj`, `asana` |
+| `qui` | nom court du client ou du fournisseur, acté dans l'espace | `bistrot`, `asana` |
 | `type` | valeur obligatoire, prise dans la liste fermée | `post` |
 | `sujet` | description courte (pour une pièce : sa référence) | `terrasse-coucher-soleil` |
 | `numéro` | numéro d'ordre sur 2 chiffres : **quel** contenu | `01` |
@@ -70,7 +71,7 @@ aa-mm-[qui]-[type]-[sujet]-[numéro].ext                ← b-rolls, cartes, pi�
 26-11-etienne-reel-cc-03-yapp-mon-sujet-v1.mp4     ← principale
 26-11-etienne-reel-cc-03-yapp-mon-sujet-v2.mp4     ← variante
 26-11-etienne-reel-nocc-03-yapp-mon-sujet-v2.mp4   ← même variante, sans sous-titres
-26-11-andrea-carrousel-nouvelle-carte-01-v2-slide-01.jpg
+26-11-camille-carrousel-nouvelle-carte-01-v2-slide-01.jpg
 ```
 
 | Avec version | Sans version |
@@ -140,9 +141,9 @@ aa-mm-[client]-reel-cc-[numéro]-[sujet]-v[version].ext
 **Le numéro vient juste après `cc` / `nocc`** : `01` est le premier réel du mois, `02` le deuxième… Placé là, il garde les réels **dans l'ordre alphabétique** du mois. Le sujet est toujours le dernier champ.
 
 ```
-26-11-lsj-reel-nocc-01-plat-signature-v1.mp4
-26-11-lsj-reel-cc-01-plat-signature-v1.mp4
-26-11-lsj-reel-cc-02-terrasse-v1.mp4
+26-11-bistrot-reel-nocc-01-plat-signature-v1.mp4
+26-11-bistrot-reel-cc-01-plat-signature-v1.mp4
+26-11-bistrot-reel-cc-02-terrasse-v1.mp4
 ```
 
 - Seul `cc` / `nocc` change entre les versions avec et sans sous-titres d'un même réel.
@@ -160,7 +161,7 @@ La version puis le numéro de slide s'ajoutent à la fin, après le numéro d'or
 
 ```
 aa-mm-[client]-carrousel-[sujet]-[numéro]-v[version]-slide-[nn].ext
-26-11-andrea-carrousel-nouvelle-carte-01-v1-slide-01.jpg
+26-11-camille-carrousel-nouvelle-carte-01-v1-slide-01.jpg
 26-11-etienne-carrousel-txti-mon-sujet-01-v1-slide-02.jpg
 ```
 
@@ -187,8 +188,8 @@ aa-mm-[client]-carte-[saison]-[support]-[format]-[numéro].ext
 - Une seule version à jour par carte dans le dossier de la saison ; la référence est le design Canva.
 
 ```
-26-11-lsj-carte-hiver-food-complète-a4-01.pdf
-26-11-bdp-carte-hiver-digitale-food-boissons-01.pdf
+26-11-bistrot-carte-hiver-food-complète-a4-01.pdf
+26-11-comptoir-carte-hiver-digitale-food-boissons-01.pdf
 ```
 
 **Rangement :** dossier menus du client → année → un dossier par saison `aa-mm-[client]-cartes-[saison]`.
@@ -200,7 +201,7 @@ aa-mm-[client]-carte-[saison]-[support]-[format]-[numéro].ext
 Le type reste `broll`. Pour un **client restaurant** (marqué dans l'espace), le sujet commence par une catégorie : `1-cuisine`, `2-boissons`, `3-salle`, `4-dehors`.
 
 ```
-26-11-lsj-broll-1-cuisine-dressage-03.mp4
+26-11-bistrot-broll-1-cuisine-dressage-03.mp4
 ```
 
 Pour les autres, le sujet décrit le plan.
@@ -214,7 +215,7 @@ aa-mm-[fournisseur ou client]-[type]-[référence]-[numéro].ext
 ```
 
 - `aa-mm` : le mois de la pièce (date de facture).
-- `fournisseur ou client` : son nom court, acté dans l'espace (`asana`, `dougs`, `meta`, `lsj`…).
+- `fournisseur ou client` : son nom court, acté dans l'espace (`asana`, `dougs`, `meta`, `bistrot`…).
 - `référence` : le numéro du document, en minuscules ; tout autre caractère devient un tiret (`INV-EU-10940503` → `inv-eu-10940503`). Sans numéro : un sujet court (`octobre`, `carte-7189`).
 - `numéro` : `01` ; `02` seulement si la même pièce a plusieurs fichiers (facture + annexe).
 - **Le montant n'est jamais dans le nom** (virgules et points interdits). Il reste dans le journal des pièces et dans le suivi.
@@ -234,7 +235,7 @@ aa-mm-[fournisseur ou client]-[type]-[référence]-[numéro].ext
 ## LES DOCUMENTS VIVANTS
 
 ```
-26-11-speak-doc-convention-de-nommage-01.md
+26-11-exemple-doc-convention-de-nommage-01.md
 ```
 
 Le mois est celui de la création. Le nom ne change pas aux mises à jour : la version est écrite **dans** le document.
@@ -276,19 +277,19 @@ aa-mm-[client]-cartes-[saison]    ← cartes d'une saison
 | Nom | Pourquoi |
 |---|---|
 | `26-11-Saint Jean-reel-cc-01-Plat Signature.mp4` | majuscules, espaces, nom court non acté |
-| `26-11-lsj-reel-cc-plat-signature-01-v1.mp4` | réel à l'ancien format — le numéro doit suivre `cc` |
-| `26-11-lsj-reel-cc-01-plat-signature.mp4` | version manquante — finir par `-v1` |
-| `26-11-andrea-carrousel-nouvelle-carte-01-slide-01-v2.jpg` | la version se place avant `slide` |
-| `26-11-lsj-broll-1-cuisine-dressage-03-v1.mp4` | un b-roll n'a pas de version |
-| `26-11-andrea-reel-01-nouvelle-carte.mp4` | `reel` seul n'existe pas |
-| `26-11-lsj-broll-1.cuisine-dressage-03.mp4` | point dans le nom |
-| `26-11-andrea-carrousel-carte-slide-02.jpg` | numéro du carrousel manquant |
-| `26_11_andrea_post_terrasse_01.jpg` | underscores |
-| `26-11-bdp-carte-hiver-vitrine-46,5x34,5-01.pdf` | virgule |
-| `26-11-lsj-menu-hiver-a4-01.pdf` | `menu` n'est pas un type — utiliser `carte` |
+| `26-11-bistrot-reel-cc-plat-signature-01-v1.mp4` | réel à l'ancien format — le numéro doit suivre `cc` |
+| `26-11-bistrot-reel-cc-01-plat-signature.mp4` | version manquante — finir par `-v1` |
+| `26-11-camille-carrousel-nouvelle-carte-01-slide-01-v2.jpg` | la version se place avant `slide` |
+| `26-11-bistrot-broll-1-cuisine-dressage-03-v1.mp4` | un b-roll n'a pas de version |
+| `26-11-camille-reel-01-nouvelle-carte.mp4` | `reel` seul n'existe pas |
+| `26-11-bistrot-broll-1.cuisine-dressage-03.mp4` | point dans le nom |
+| `26-11-camille-carrousel-carte-slide-02.jpg` | numéro du carrousel manquant |
+| `26_11_camille_post_terrasse_01.jpg` | underscores |
+| `26-11-comptoir-carte-hiver-vitrine-46,5x34,5-01.pdf` | virgule |
+| `26-11-bistrot-menu-hiver-a4-01.pdf` | `menu` n'est pas un type — utiliser `carte` |
 | `26-11-asana-facture-01.pdf` | référence manquante |
 | `26-11-dougs-facture-26,98-01.pdf` | montant dans le nom |
-| `26-09-andrea-rushs-mensuels-septembre` | mois écrit deux fois |
+| `26-09-camille-rushs-mensuels-septembre` | mois écrit deux fois |
 
 ---
 

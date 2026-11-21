@@ -13,6 +13,38 @@ Dans ce fichier, `$M` désigne `${CLAUDE_PLUGIN_ROOT}/moteur`.
 
 Ce branchement est facultatif. Sans Drive ou sans le template Notion, le Studio fonctionne normalement et ne réclame rien.
 
+## Contrat du magasinier
+
+Version attendue : contrat v6.
+
+Avant de ranger, renommer ou déplacer un fichier dans un stockage, lis `${CLAUDE_PLUGIN_ROOT}/ressources/contrat-magasinier.md` s'il existe :
+- s'il porte la version attendue, applique ses règles en plus de celles de ce skill ; si deux règles se contredisent, la plus prudente gagne ;
+- s'il est absent, travaille comme d'habitude, sans rien réclamer ;
+- s'il porte une autre version, travaille comme d'habitude et dis en une phrase : « le contrat du magasinier n'est pas celui attendu ».
+
+Au début de ce skill, lis aussi `${CLAUDE_PLUGIN_ROOT}/ressources/annonces-magasinier.md` s'il existe, et présente à la personne les annonces `ouverte`. Pour une incohérence, dépose un signalement comme le dit le contrat, sans changer la règle toi-même.
+
+Quand une règle du contrat t'empêche de faire ce que la personne demande, refuse en trois temps : ce que tu ne fais pas, pourquoi (ce que la règle protège), et ce que tu peux faire à la place, à son choix, en boutons. N'insiste pas et ne fais jamais l'action refusée.
+
+Emplacements propres : le dossier du plugin et les dossiers `chantier-*` de l'ordinateur. Ils ne vont jamais dans le Drive des contenus. Seul le miroir de sauvegarde du plugin, choisi par la personne avec le magasinier, en reçoit une copie.
+
+Dossier personnel : `~/Studio/mon-espace` (marque, styles, voix, contenus, réglages). Les mises à jour ne le touchent jamais.
+
+Commande d'entrée : `/studio:start`.
+
+Proposer une règle : quand une façon de faire durable apparaît, propose-la comme le dit `${CLAUDE_PLUGIN_ROOT}/ressources/proposer-une-regle.md` (personnalisation, fonctionnement générique ou règle commune de la famille, avec des boutons), puis écris-la avec `/studio:regles`.
+
+Choix en boutons : chaque fois que tu proposes des choix (y compris après un refus), affiche-les en boutons avec l'outil de question à choix, quatre au plus, ta recommandation en premier.
+
+Compte rendu de fin de session : pas de compte rendu après chaque réponse. Quand la personne s'arrête, fais le compte rendu de fin de session du contrat (Fait, État, Reste à faire, La prochaine fois) et garde-le dans `~/Studio/mon-espace/derniere-session.md`.
+
+Mises à jour et miroir : la veille tourne à chaque ouverture (voir `ressources/verification-ouverture.md`). Si la personne demande de sauvegarder le Studio, lance `python3 "$M/veille.py" miroir`. S'il répond qu'aucun dossier n'est choisi, explique pourquoi tu ne copies rien, puis **choisis avec la logique du magasinier**, dans cette session :
+1. Le miroir est commun à toute la famille : cherche d'abord où les autres outils ont déjà leur sauvegarde ou leur miroir (par exemple un dossier `Skills` qui contient déjà `Secrétaire` ou `Socle`) et propose ce dossier-là comme base. Sinon, propose le dossier le plus logique dans l'espace personnel de la personne, jamais chez un client.
+2. Dis en une phrase pourquoi, et demande avec des boutons : ce dossier (recommandé), un autre dossier, plus tard.
+3. Après son accord seulement : `python3 "$M/veille.py" choisir-miroir "<dossier>"`, puis `python3 "$M/veille.py" miroir`, et dis le résultat de la vérification (nombre de fichiers, différences).
+
+Ne modifie jamais ce contrat ni ses annonces : ce sont des copies.
+
 ## Où sont les dossiers
 
 Lance `python3 "$M/chemins.py"`. Il donne l'emplacement réel de chaque dossier local. Lis `drive_contenu` et `banque_notion` dans le fichier indiqué par `config`.
@@ -58,7 +90,7 @@ Seulement à la demande : quand la personne demande un fichier précis de son Dr
 - **Chaque mise à jour d'un contenu déjà livré** (nouvelle version, slides remplacées, dossier renommé ou fusionné) repasse par l'envoi, l'attente et le contrôle de fin. Remplacer un fichier garde le même dossier Drive : le lien de la fiche reste bon, mais le contrôle le vérifie quand même.
 
 - La copie va de l'ordinateur vers Drive et ne supprime rien sur Drive.
-- Le plugin et les brouillons ne vont jamais sur Drive.
+- Le plugin et les brouillons ne vont jamais dans le Drive des contenus (seul le miroir de sauvegarde, choisi par la personne, reçoit une copie du plugin).
 - Rien n'est publié par ce skill.
 - Ne passe jamais un contenu à `✅ Publié`.
 - Ne demande jamais de mot de passe ni de jeton dans la conversation.
