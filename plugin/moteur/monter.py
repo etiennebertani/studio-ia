@@ -750,7 +750,8 @@ def cmd_valider(args):
     final = dossier / "final"
     final.mkdir(exist_ok=True)
     mois = nommage.periode()
-    numero = plan.get("numero") or nommage.prochain_numero(final, [f"{mois}-{client}-reel-cc-{sujet_video}", f"{mois}-{client}-reel-nocc-{sujet_video}"])
+    # Convention v1.5 : le numéro d'un réel est son rang dans le mois, compté sur tous les réels du client.
+    numero = plan.get("numero") or nommage.prochain_numero_reel(dossier.parent, mois, client)
 
     def nom(type_, sujet_):
         return final / nommage.nom_fichier(mois, client, type_, sujet_, numero, ".mp4")
