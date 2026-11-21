@@ -518,7 +518,7 @@ def cmd_essai(args):
     for nom in ("mots.json", "projet.json", "transcription.txt"):
         shutil.copy2(source / nom, cible / nom)
     plan = lire(source / "plan.json")
-    plan["numero"] = args.numero
+    plan["version"] = args.numero  # convention v1.6 : un essai est une variante (v2, v3…) du même réel
     ecrire(cible / "plan.json", plan)
     repondre(essai=args.numero, plan=str(cible / "plan.json"))
 
@@ -636,20 +636,20 @@ def garder_extraits(dossier, plan, r, client):
     return retenus
 
 
-def dernier_reel_sous_titre(final, numero=None):
-    """La version validée la plus récente de ce numéro, avec sous-titres et avec ses illustrations."""
+def dernier_reel_sous_titre(final, version=None):
+    """La version validée la plus récente (ou cette version-là), avec sous-titres et avec ses illustrations."""
     candidats = []
     for fichier in final.glob("*.mp4"):
         infos = nommage.analyser(unicodedata.normalize("NFC", fichier.name))
-        if infos["ok"] and infos["type"] == "reel-cc" and not infos["sujet"].endswith("-sans-illustrations") and (not numero or infos["numero"] == numero):
-            candidats.append((infos["mois"], infos["numero"], fichier))
-    return max(candidats)[2] if candidats else None
+        if infos["ok"] and infos["type"] == "reel-cc" and not infos["sujet"].endswith("-sans-illustrations") and (not version or infos.get("version") == version):
+            candidats.append((infos["mois"], infos["numero"], infos.get("version") or 0, fichier))
+    return max(candidats)[3] if candidats else None
 
 
 def cmd_exemple(args):
     """Fait de cette vidéo validée l'exemple de son style. Elle remplace le précédent."""
     dossier, _, projet, plan, _, _ = charger(args.dossier, args.essai)
-    source = dernier_reel_sous_titre(dossier / "final", plan.get("numero"))
+    source = dernier_reel_sous_titre(dossier / "final", plan.get("version"))
     if not source:
         raise SystemExit("Valide d'abord cette vidéo.")
     nom = next(s["nom"] for s in lire(BASE)["styles"] if s["id"] == projet["style"])
@@ -679,7 +679,8 @@ def ecrire_texte(dossier, plan, mots, passages):
     if courant:
         phrases.append(" ".join(courant))
     lignes = ([f"HT: {plan['titre']}", ""] if plan.get("titre") else []) + phrases
-    nom = f"texte-essai-{plan['numero']:02d}.txt" if (plan.get("numero") or 1) > 1 else "texte.txt"
+    variante = plan.get("version") or plan.get("numero") or 1
+    nom = f"texte-essai-{variante:02d}.txt" if variante > 1 else "texte.txt"
     (dossier / "final" / nom).write_text("\n".join(lignes) + "\n", encoding="utf-8")
 
 
@@ -750,11 +751,17 @@ def cmd_valider(args):
     final = dossier / "final"
     final.mkdir(exist_ok=True)
     mois = nommage.periode()
-    # Convention v1.5 : le numéro d'un réel est son rang dans le mois, compté sur tous les réels du client.
-    numero = plan.get("numero") or nommage.prochain_numero_reel(dossier.parent, mois, client)
+    # Convention v1.6 : le numéro est le rang du réel dans le mois (tous les réels du client) ;
+    # une nouvelle validation du même réel garde son numéro et prend la version suivante (v2, v3…).
+    deja = [nommage.analyser(f.name) for f in final.glob("*.mp4")]
+    deja = [i for i in deja if i["ok"] and i["type"] in ("reel-cc", "reel-nocc") and i["mois"] == mois and i["client"] == client]
+    if travail.name.startswith("essai-") and "version" not in plan:
+        plan["version"] = plan.pop("numero", None) or int(travail.name.split("-")[1])  # essais d'avant la v1.6
+    numero = plan.get("numero") or (max(i["numero"] for i in deja) if deja else nommage.prochain_numero_reel(dossier.parent, mois, client))
+    version = plan.get("version") or nommage.prochaine_version(final, mois, client, numero)
 
     def nom(type_, sujet_):
-        return final / nommage.nom_fichier(mois, client, type_, sujet_, numero, ".mp4")
+        return final / nommage.nom_fichier(mois, client, type_, sujet_, numero, ".mp4", version=version)
 
     shutil.copy2(video, nom("reel-cc", sujet_video))
     resultat = fabriquer(dossier, travail, projet, plan, mots, r, nom("reel-nocc", sujet_video), avec_sous_titres=False)

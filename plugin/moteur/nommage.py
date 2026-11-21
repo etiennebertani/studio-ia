@@ -14,7 +14,7 @@ Il lit deux couches :
     python3 nommage.py sujet "<texte>"
     python3 nommage.py clients <nom> [<nom>...]
     python3 nommage.py piece --tiers <nom court> --type facture --date 2026-11-03 --reference "INV-EU-1094" --ext pdf [--dossier <destination>] [--espace speak]
-    python3 nommage.py carrousel --dossier <final> --client <client> --style <style> --sujet "<sujet>" [--periode aa-mm] [--numero 2]
+    python3 nommage.py carrousel --dossier <final> --client <client> --style <style> --sujet "<sujet>" [--periode aa-mm] [--numero 2] [--version 2]
     python3 nommage.py version
 
 Bibliothèque standard uniquement.
@@ -92,14 +92,23 @@ def periode(date=None):
     return (date or datetime.date.today()).strftime("%y-%m")
 
 
-def nom_fichier(mois, client, type_, sujet_, numero, extension, slide=None):
-    """Le nom complet. Pour un réel, le numéro (rang du réel dans le mois) vient juste après cc / nocc."""
+def versionne(type_):
+    return bool(TYPES_INFOS.get(type_, {}).get("versionne"))
+
+
+def nom_fichier(mois, client, type_, sujet_, numero, extension, slide=None, version=None):
+    """Le nom complet. Pour un réel, le numéro (rang du réel dans le mois) vient juste après cc / nocc.
+    Un type versionné finit par -vN (v1 = la principale), avant -slide-nn pour un carrousel."""
     if type_ not in TYPES_INFOS:
         raise ValueError(f"Type hors de la liste fermée : {type_}")
     if TYPES_INFOS[type_]["ordre"] == "reel":
         base = f"{mois}-{client}-{type_}-{numero:02d}-{sujet_}"
     else:
         base = f"{mois}-{client}-{type_}-{sujet_}-{numero:02d}"
+    if versionne(type_):
+        base += f"-v{version or 1}"
+    elif version is not None:
+        raise ValueError(f"Un {type_} n'a pas de version")
     if slide is not None:
         base += f"-slide-{slide:02d}"
     if not extension.startswith("."):
@@ -147,6 +156,15 @@ def analyser(nom, restaurant=False, espace=None):
     trouve = re.search(r"-slide-(\d\d)$", reste)
     if trouve:
         slide, reste = int(trouve.group(1)), reste[:trouve.start()]
+    version = None
+    trouve = re.search(r"-v(\d+)$", reste)
+    if trouve:
+        if trouve.group(1).startswith("0"):
+            erreurs.append(f"version écrite v{trouve.group(1)} : écrire v{int(trouve.group(1))}")
+        version, reste = int(trouve.group(1)), reste[:trouve.start()]
+        if re.search(r"-slide-\d\d$", reste):
+            erreurs.append("version après la slide : -vN se place avant -slide-nn")
+            return resultat
     segments = reste.split("-")
     if len(segments) < 5 or not re.fullmatch(r"\d\d", segments[0]) or not re.fullmatch(r"\d\d", segments[1]):
         erreurs.append("aa-mm manquant")
@@ -176,6 +194,10 @@ def analyser(nom, restaurant=False, espace=None):
             erreurs.append("numéro à 2 chiffres manquant" if not (type_ == "carrousel" and slide) else "numéro du carrousel manquant")
             return resultat
         numero, sujet_ = int(morceaux[-1]), "-".join(morceaux[:-1])
+    if versionne(type_) and version is None:
+        erreurs.append("version manquante : finir par -v1 (principale), -v2…")
+    if not versionne(type_) and version is not None:
+        erreurs.append(f"un {type_} n'a pas de version")
     if not client:
         erreurs.append("client manquant")
     if not sujet_:
@@ -195,7 +217,7 @@ def analyser(nom, restaurant=False, espace=None):
     if restaurant and type_ == "broll" and not any(sujet_ == c or sujet_.startswith(c + "-") for c in CATEGORIES_RESTAURANT):
         erreurs.append("catégorie de b-roll manquante")
     resultat.update(ok=not erreurs, mois=f"{segments[0]}-{segments[1]}", client=client, type=type_,
-                    famille=TYPES_INFOS[type_]["famille"], sujet=sujet_, numero=numero, slide=slide)
+                    famille=TYPES_INFOS[type_]["famille"], sujet=sujet_, numero=numero, version=version, slide=slide)
     return resultat
 
 
@@ -258,6 +280,18 @@ def prochain_numero_reel(dossiers, mois, client):
     return plus_haut + 1
 
 
+def prochaine_version(dossiers, mois, client, numero, types=("reel-cc", "reel-nocc")):
+    """La version suivante d'un même contenu (même mois, client, numéro et famille de types)."""
+    plus_haute = 0
+    for dossier in ([dossiers] if isinstance(dossiers, (str, Path)) else dossiers):
+        if Path(dossier).is_dir():
+            for fichier in Path(dossier).rglob("*"):
+                infos = analyser(fichier.name)
+                if infos["ok"] and infos["type"] in types and infos["mois"] == mois and infos["client"] == client and infos["numero"] == numero:
+                    plus_haute = max(plus_haute, infos["version"] or 0)
+    return plus_haute + 1
+
+
 def nom_piece(tiers, type_, date, ref, extension, dossier=None, espace=None):
     """Le nom d'une pièce comptable : aa-mm-tiers-type-référence-numéro.ext (aa-mm = mois de la pièce)."""
     if TYPES_INFOS.get(type_, {}).get("ordre") != "piece":
@@ -272,15 +306,18 @@ def nom_piece(tiers, type_, date, ref, extension, dossier=None, espace=None):
     return nom_fichier(mois, tiers, type_, ref_, numero, extension)
 
 
-def nommer_carrousel(dossier, client, sujet_, mois, numero=None):
-    """Renomme les slide-NN d'un dossier selon la convention. Ne touche à rien si un nom existe déjà."""
+def nommer_carrousel(dossier, client, sujet_, mois, numero=None, version=None):
+    """Renomme les slide-NN d'un dossier selon la convention. Ne touche à rien si un nom existe déjà.
+    Une déclinaison du même carrousel (un 4b) garde son numéro et prend la version suivante (--version 2)."""
     dossier = Path(dossier)
     slides = sorted(f for f in dossier.iterdir() if re.fullmatch(r"slide-\d\d", f.stem))
     if not slides:
         return []
     prefixe = f"{mois}-{client}-carrousel-{sujet_}"
-    numero = numero or prochain_numero(dossier, [prefixe])
-    paires = [(f, dossier / nom_fichier(mois, client, "carrousel", sujet_, numero, f.suffix, int(f.stem[-2:]))) for f in slides]
+    if not numero:
+        suivant = prochain_numero(dossier, [prefixe])
+        numero = max(1, suivant - 1) if version else suivant
+    paires = [(f, dossier / nom_fichier(mois, client, "carrousel", sujet_, numero, f.suffix, int(f.stem[-2:]), version)) for f in slides]
     if any(cible.exists() for _, cible in paires):
         raise SystemExit("Un fichier porte déjà ce nom. Rien n'a été renommé.")
     for source, cible in paires:
@@ -313,6 +350,7 @@ def main():
     p.add_argument("--sujet", required=True)
     p.add_argument("--periode", default=periode())
     p.add_argument("--numero", type=int)
+    p.add_argument("--version", type=int)
     args = parser.parse_args()
     espace = charger_espace(args.espace)
     if args.action == "verifier":
@@ -328,7 +366,7 @@ def main():
     elif args.action == "piece":
         sortie = nom_piece(args.tiers, args.type, args.date, args.reference, args.ext, args.dossier, espace)
     else:
-        sortie = nommer_carrousel(args.dossier, args.client, f"{CODES_CARROUSEL[args.style]}-{sujet(args.sujet)}", args.periode, args.numero)
+        sortie = nommer_carrousel(args.dossier, args.client, f"{CODES_CARROUSEL[args.style]}-{sujet(args.sujet)}", args.periode, args.numero, args.version)
     print(json.dumps(sortie, ensure_ascii=False, indent=1))
 
 

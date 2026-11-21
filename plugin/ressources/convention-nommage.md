@@ -1,4 +1,4 @@
-# CONVENTION DE NOMMAGE — v1.5
+# CONVENTION DE NOMMAGE — v1.6
 
 **Document de référence unique**, pour les contenus, les pièces comptables et les documents. Tous les skills (Studio, Secrétaire, assistant Drive) l'appliquent avec le même moteur.
 
@@ -9,6 +9,7 @@
 Source : le Socle (`~/Socle`), recopié dans chaque skill et sur le Drive à chaque mise à jour. Ne modifie jamais une copie : modifie le Socle.
 
 > **Nouveautés**
+> - **v1.6 (21/11/2026) :** les **versions** : les contenus finissent par `-v1` (la principale), `-v2`, `-v3` pour les variantes. Le numéro dit quel contenu c'est, le `v` dit quelle version.
 > - **v1.5 (21/11/2026) :** une seule convention pour SPEAK, le Studio et la Secrétaire (fusion de la v1.4 SPEAK, de la v1.1 et de la convention du Studio). Nouveaux types **pièces comptables** (`facture`, `avoir`, `recu`, `releve`, `devis`, `contrat`) et **`doc`**. Le numéro d'un réel est son **rang dans le mois**. Codes de format du Studio intégrés. Noms courts et chemins déplacés dans l'espace.
 > - **v1.4 (18/11/2026) :** type `carte`, noms courts `lsj` et `bdp`.
 > - **v1.3 (16/11/2026) :** dossiers de rushs.
@@ -34,7 +35,8 @@ Cette convention est décidée. Elle ne se rediscute pas sur le fond. Mais **ava
 ## FORMAT GÉNÉRAL
 
 ```
-aa-mm-[qui]-[type]-[sujet]-[numéro].ext
+aa-mm-[qui]-[type]-[sujet]-[numéro]-v[version].ext     ← contenus
+aa-mm-[qui]-[type]-[sujet]-[numéro].ext                ← b-rolls, cartes, pièces, documents
 ```
 
 | Champ | Règle | Exemple |
@@ -43,13 +45,37 @@ aa-mm-[qui]-[type]-[sujet]-[numéro].ext
 | `qui` | nom court du client ou du fournisseur, acté dans l'espace | `lsj`, `asana` |
 | `type` | valeur obligatoire, prise dans la liste fermée | `post` |
 | `sujet` | description courte (pour une pièce : sa référence) | `terrasse-coucher-soleil` |
-| `numéro` | numéro d'ordre sur 2 chiffres | `01` |
+| `numéro` | numéro d'ordre sur 2 chiffres : **quel** contenu | `01` |
+| `v` + version | **quelle version** de ce contenu, à la toute fin (voir « Les versions ») | `v1` |
 
 **Quel mois ?**
 - Contenu : le mois de **validation**. Le mois de publication se note à part (banque de contenu).
 - Carte de restaurant : le mois où elle entre en service.
 - Pièce comptable : le mois de la **pièce** (date de la facture), jamais le mois d'archivage.
 - Document vivant (`doc`) : le mois de sa création. Il garde son nom à chaque mise à jour, pour ne pas casser les liens.
+
+---
+
+## LES VERSIONS (v1.6)
+
+**Le numéro dit quel contenu c'est. Le `v` dit quelle version de ce contenu.** Le numéro ne bouge jamais ; seules les variantes changent de `v`.
+
+- `v1` = la version principale. Le `v` est **obligatoire**, même s'il n'y a qu'une version.
+- `v2`, `v3`… = les variantes du même contenu (essai de reel, autre hook, autre musique, déclinaison d'un carrousel). Même date, même client, même numéro, même sujet.
+- S'écrit `v1`, `v2`… sans zéro devant.
+- Toujours **à la toute fin**, juste avant l'extension ; pour un carrousel, **avant** `slide-nn` (la slide est une page de la version).
+- Les versions `cc` et `nocc` d'une même variante partagent le même `v`.
+
+```
+26-11-etienne-reel-cc-03-yapp-mon-sujet-v1.mp4     ← principale
+26-11-etienne-reel-cc-03-yapp-mon-sujet-v2.mp4     ← variante
+26-11-etienne-reel-nocc-03-yapp-mon-sujet-v2.mp4   ← même variante, sans sous-titres
+26-11-andrea-carrousel-nouvelle-carte-01-v2-slide-01.jpg
+```
+
+| Avec version | Sans version |
+|---|---|
+| `post`, `story`, `reel-cc`, `reel-nocc`, `video-cc`, `video-nocc`, `visuel`, `carrousel` | `broll` (un plan n'a pas de version), `carte` (une seule version à jour), pièces comptables (une correction est un `avoir` ou une nouvelle pièce), `doc` (la version est écrite dedans) |
 
 ---
 
@@ -107,21 +133,22 @@ aa-mm-[qui]-[type]-[sujet]-[numéro].ext
 ## LES RÉELS — le numéro est le rang du réel dans le mois
 
 ```
-aa-mm-[client]-reel-nocc-[numéro]-[sujet].ext
-aa-mm-[client]-reel-cc-[numéro]-[sujet].ext
+aa-mm-[client]-reel-nocc-[numéro]-[sujet]-v[version].ext
+aa-mm-[client]-reel-cc-[numéro]-[sujet]-v[version].ext
 ```
 
 **Le numéro vient juste après `cc` / `nocc`** : `01` est le premier réel du mois, `02` le deuxième… Placé là, il garde les réels **dans l'ordre alphabétique** du mois. Le sujet est toujours le dernier champ.
 
 ```
-26-11-lsj-reel-nocc-01-plat-signature.mp4
-26-11-lsj-reel-cc-01-plat-signature.mp4
-26-11-lsj-reel-cc-02-terrasse.mp4
+26-11-lsj-reel-nocc-01-plat-signature-v1.mp4
+26-11-lsj-reel-cc-01-plat-signature-v1.mp4
+26-11-lsj-reel-cc-02-terrasse-v1.mp4
 ```
 
-- Seul `cc` / `nocc` change entre les deux versions d'un même réel.
+- Seul `cc` / `nocc` change entre les versions avec et sans sous-titres d'un même réel.
+- Une variante du même réel garde son numéro et prend le `v` suivant.
 - **Rangement :** les versions sans et avec sous-titres vont dans **deux dossiers distincts**.
-- Avec le Studio, le sujet commence par le **code du format** : `26-11-etienne-reel-cc-03-yapp-mon-sujet.mp4`.
+- Avec le Studio, le sujet commence par le **code du format** : `26-11-etienne-reel-cc-03-yapp-mon-sujet-v1.mp4`.
 
 **Codes de format des réels :** `yap`, `yapp` (Yap+), `fce` (face caméra éducatif), `vlog`, `clean` (coupe propre), `os` (one shot), `tenshots`, `infographie` (reel animé), `temoignage`.
 
@@ -129,17 +156,17 @@ aa-mm-[client]-reel-cc-[numéro]-[sujet].ext
 
 ## LES CARROUSELS
 
-Le numéro de slide s'ajoute à la fin, après le numéro d'ordre du carrousel.
+La version puis le numéro de slide s'ajoutent à la fin, après le numéro d'ordre du carrousel.
 
 ```
-aa-mm-[client]-carrousel-[sujet]-[numéro]-slide-[nn].ext
-26-11-andrea-carrousel-nouvelle-carte-01-slide-01.jpg
-26-11-etienne-carrousel-txti-mon-sujet-01-slide-02.jpg
+aa-mm-[client]-carrousel-[sujet]-[numéro]-v[version]-slide-[nn].ext
+26-11-andrea-carrousel-nouvelle-carte-01-v1-slide-01.jpg
+26-11-etienne-carrousel-txti-mon-sujet-01-v1-slide-02.jpg
 ```
 
 **Codes de format des carrousels** (en tête du sujet, avec le Studio) : `tweet`, `txt` (texte), `txti` (texte + image), `punchline`, `infographie`.
 
-Un carrousel en plusieurs variantes range chacune dans son dossier (`final/noir/`, `final/blanc/`).
+Une déclinaison du même carrousel (un « 4b ») garde le numéro et prend `v2`. Un carrousel en plusieurs variantes range chacune dans son dossier (`final/noir/`, `final/blanc/`).
 
 ---
 
@@ -236,7 +263,7 @@ aa-mm-[client]-cartes-[saison]    ← cartes d'une saison
 
 ## CE QUI SUIT LA CONVENTION, CE QUI GARDE SON NOM
 
-**Suit :** les fichiers finaux (réels, carrousels, slides, posts, visuels, cartes), les extraits de b-roll de 30 secondes, les pièces comptables archivées, les documents vivants.
+**Suit :** les fichiers finaux, avec leur version, (réels, carrousels, slides, posts, visuels, cartes), les extraits de b-roll de 30 secondes, les pièces comptables archivées, les documents vivants.
 
 **Garde son nom :** les rushs, les musiques, les images ajoutées aux vidéos, les photos sources, `texte.txt`, `legendes.txt`, les fichiers de travail.
 
@@ -249,7 +276,10 @@ aa-mm-[client]-cartes-[saison]    ← cartes d'une saison
 | Nom | Pourquoi |
 |---|---|
 | `26-11-Saint Jean-reel-cc-01-Plat Signature.mp4` | majuscules, espaces, nom court non acté |
-| `26-11-lsj-reel-cc-plat-signature-01.mp4` | réel à l'ancien format — le numéro doit suivre `cc` |
+| `26-11-lsj-reel-cc-plat-signature-01-v1.mp4` | réel à l'ancien format — le numéro doit suivre `cc` |
+| `26-11-lsj-reel-cc-01-plat-signature.mp4` | version manquante — finir par `-v1` |
+| `26-11-andrea-carrousel-nouvelle-carte-01-slide-01-v2.jpg` | la version se place avant `slide` |
+| `26-11-lsj-broll-1-cuisine-dressage-03-v1.mp4` | un b-roll n'a pas de version |
 | `26-11-andrea-reel-01-nouvelle-carte.mp4` | `reel` seul n'existe pas |
 | `26-11-lsj-broll-1.cuisine-dressage-03.mp4` | point dans le nom |
 | `26-11-andrea-carrousel-carte-slide-02.jpg` | numéro du carrousel manquant |
@@ -265,13 +295,14 @@ aa-mm-[client]-cartes-[saison]    ← cartes d'une saison
 ## RÈGLES DE DÉCOUPAGE (pour le moteur)
 
 Chaque champ se reconnaît par sa **forme**, pas par sa position :
-1. Retirer l'extension, puis le suffixe `slide-NN` s'il existe (carrousel).
+1. Retirer l'extension, puis le suffixe `slide-NN` s'il existe (carrousel), puis le suffixe `-vN` s'il existe (version).
 2. Les 2 premiers segments = `aa`, `mm`.
 3. Chercher le type qui apparaît **le plus tôt** ; à égalité, le plus long (`reel-cc` avant `reel`, `carrousel` avant `carte`).
 4. Avant le type = `qui`.
 5. Réel : le segment après le type = numéro, le reste = sujet. Un réel avec le numéro à la fin est **signalé** comme ancien format, jamais corrigé en silence.
 6. Autres : le dernier segment = numéro, entre les deux = sujet (ou référence).
-7. Avec un espace : `qui` doit y être acté ; client restaurant → catégorie de b-roll obligatoire.
+7. Type versionné sans `-vN`, ou type non versionné avec `-vN` : refusé.
+8. Avec un espace : `qui` doit y être acté ; client restaurant → catégorie de b-roll obligatoire.
 
 ---
 
@@ -280,8 +311,8 @@ Chaque champ se reconnaît par sa **forme**, pas par sa position :
 - `video-cc` / `video-nocc` gardent le numéro à la fin tant que rien d'autre n'est décidé.
 - Sous-dossiers de vidéos dans les rushs : non normalisés.
 - Noms exacts des deux dossiers cc / nocc à consigner dans l'espace.
-- Fichiers d'avant la v1.5 (réels du Studio au numéro final, anciennes factures, anciennes cartes) : à renommer sur liste validée.
+- Fichiers d'avant la v1.6 (réels et carrousels du Studio sans version, réels au numéro final, anciennes factures, anciennes cartes) : à renommer sur liste validée.
 
 ---
 
-*Convention de nommage — v1.5 · 21 novembre 2026. Source : le Socle.*
+*Convention de nommage — v1.6 · 21 novembre 2026. Source : le Socle.*

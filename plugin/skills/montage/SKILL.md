@@ -120,7 +120,7 @@ Il y a un `--rush` par fichier. Le résultat liste les retraits proposés et `re
 
 - Si le rush dure plus de 2 minutes environ, ou contient plusieurs idées, propose 2 ou 3 structures, chacune avec sa durée estimée et les phrases du rush qui la remplissent.
 - Cherche d'abord dans la base de scripts de la personne, au format Yap. Sans base, utilise `${CLAUDE_PLUGIN_ROOT}/ressources/structures-yap.md`.
-- La personne choisit laquelle devient la version `01`. Les autres peuvent devenir des essais, dans le même dossier de contenu, avec un hook parlé et un hook text différents. Crée chaque essai avec `$PY "$M/monter.py" essai --dossier "<contenu>" --numero 2`, puis ajoute `--essai 2` aux commandes `couper`, `rendre`, `controler`, `affiner`, `valider`. Son plan est dans `travail/essai-02/plan.json`.
+- La personne choisit laquelle devient la version principale (`v1`). Les autres peuvent devenir des essais (variantes `v2`, `v3`… du même réel, même numéro), dans le même dossier de contenu, avec un hook parlé et un hook text différents. Crée chaque essai avec `$PY "$M/monter.py" essai --dossier "<contenu>" --numero 2`, puis ajoute `--essai 2` aux commandes `couper`, `rendre`, `controler`, `affiner`, `valider`. Son plan est dans `travail/essai-02/plan.json`.
 - Vise moins d'une minute. S'il manque un bloc, dis quelle phrase refilmer. N'en invente jamais.
 
 Corrige `travail/plan.json` :
@@ -216,7 +216,7 @@ Seulement après un oui clair pour cette vidéo, lance :
 $PY "$M/monter.py" valider --dossier "<contenu>"
 ```
 
-`final/` contient alors le reel avec sous-titres (`reel-cc`), le reel sans sous-titres (`reel-nocc`), nommés selon `${CLAUDE_PLUGIN_ROOT}/ressources/convention-nommage.md`, et le script dans `texte.txt`. Une nouvelle validation le même mois prend le numéro suivant.
+`final/` contient alors le reel avec sous-titres (`reel-cc`), le reel sans sous-titres (`reel-nocc`), nommés selon `${CLAUDE_PLUGIN_ROOT}/ressources/convention-nommage.md`, et le script dans `texte.txt`. Le numéro est le rang du réel dans le mois ; une nouvelle validation du même réel garde son numéro et prend la version suivante (`-v2`, `-v3`…).
 
 Avant de valider, vérifie que `marque.json` a une clé `client`, le nom court de la personne. Sinon, demande-le-lui, compare-le à ceux qui existent sans tenir compte des accents, et écris-le dans sa `marque.json`.
 
