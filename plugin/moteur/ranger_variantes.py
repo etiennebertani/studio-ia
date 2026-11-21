@@ -1,8 +1,9 @@
 """Range les slides d'un carrousel par variante et les date dans l'ordre.
 
-    python3 ranger_variantes.py --dossier <final> [--noms 01=noir 02=blanc]
+    python3 ranger_variantes.py --dossier <final> [--noms v1=noir v2=blanc]
 
-1. S'il y a plusieurs variantes (le numéro avant -slide-nn), chacune va dans son propre dossier de final/ :
+1. S'il y a plusieurs variantes (convention v1.6 : la version -vN avant -slide-nn ; avant la v1.6, le numéro),
+   chacune va dans son propre dossier de final/ :
    le nom donné par --noms, sinon le style lu dans le nom du fichier (tweet, texte-image…).
    texte.txt et legendes.txt restent dans final/, à côté des dossiers.
 2. Chaque slide reçoit une date de prise de vue décalée d'une seconde (slide 1 à hh:mm:00, slide 2 à hh:mm:01…),
@@ -19,7 +20,12 @@ from pathlib import Path
 
 from PIL import Image
 
-MOTIF = re.compile(r"^(?P<base>.+?)-(?P<variante>\d\d)-slide-(?P<slide>\d\d)\.(jpe?g)$", re.I)
+MOTIF = re.compile(r"^(?P<base>.+?)-(?:(?P<numero>\d\d)-v(?P<version>\d+)|(?P<ancien>\d\d))-slide-(?P<slide>\d\d)\.(jpe?g)$", re.I)
+
+
+def variante(m):
+    """La clé de la variante : v1, v2… (v1.6), ou l'ancien numéro 01, 02… (avant la v1.6)."""
+    return f"v{int(m['version'])}" if m["version"] else m["ancien"]
 CODES = {"txt": "texte", "txti": "texte-image", "tweet": "tweet", "punch": "punchline", "infographie": "infographie"}
 
 
@@ -64,17 +70,22 @@ def main():
     p.add_argument("--noms", nargs="*", default=[])
     a = p.parse_args()
     final = Path(a.dossier)
-    noms = dict(n.split("=", 1) for n in a.noms)
+    noms = {}
+    for n in a.noms:
+        cle, nom = n.split("=", 1)
+        noms[cle] = nom
+        if re.fullmatch(r"\d+", cle):  # 1=noir ou 01=noir valent aussi pour v1
+            noms.setdefault(f"v{int(cle)}", nom)
     slides = [f for f in final.rglob("*") if f.is_file() and MOTIF.match(f.name)]
-    variantes = sorted({MOTIF.match(f.name)["variante"] for f in slides})
+    variantes = sorted({variante(MOTIF.match(f.name)) for f in slides})
     deplaces = []
     if len(variantes) > 1:
         for f in slides:
             m = MOTIF.match(f.name)
-            nom = noms.get(m["variante"])
+            nom = noms.get(variante(m))
             if not nom:
                 code = m["base"].split("-carrousel-")[-1].split("-")[0]
-                nom = f"{m['variante']} - {CODES.get(code, code)}"
+                nom = f"{variante(m)} - {CODES.get(code, code)}"
             cible = final / nom / f.name
             if f != cible:
                 cible.parent.mkdir(exist_ok=True)
